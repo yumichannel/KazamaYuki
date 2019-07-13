@@ -1,0 +1,102 @@
+[
+    {
+        "guild_id": "201913926848479232",
+        "welcomeMsg": [
+            "Hello @user"
+        ],
+        "welcomeChannel": "tester-tester",
+        "errorMsg": [
+            "Unfortunely,It's error"
+        ],
+        "prefix": ".",
+        "lang": "vi"
+    },
+    {
+        "guild_id": "217282275350544384",
+        "welcomeMsg": [],
+        "welcomeChannel": "general",
+        "errorMsg": [],
+        "prefix": ".",
+        "lang": "en"
+    },
+    {
+        "guild_id": "322088112866197504",
+        "welcomeMsg": [],
+        "welcomeChannel": "general",
+        "errorMsg": [],
+        "prefix": ";",
+        "lang": "en"
+    },
+    {
+        "guild_id": "328888676228530176",
+        "welcomeMsg": [],
+        "welcomeChannel": "general",
+        "errorMsg": [],
+        "prefix": ";",
+        "lang": "en"
+    },
+    {
+        "guild_id": "337641217481375745",
+        "welcomeMsg": [],
+        "welcomeChannel": "general",
+        "errorMsg": [],
+        "prefix": ";",
+        "lang": "en"
+    },
+    {
+        "guild_id": "360296414674288653",
+        "welcomeMsg": [],
+        "welcomeChannel": "general",
+        "errorMsg": [],
+        "prefix": ";",
+        "lang": "en"
+    },
+    {
+        "guild_id": "398543191370104832",
+        "welcomeMsg": [],
+        "welcomeChannel": "general",
+        "errorMsg": [],
+        "prefix": ";",
+        "lang": "en"
+    },
+    {
+        "guild_id": "433683637821636612",
+        "welcomeMsg": [],
+        "welcomeChannel": "general",
+        "errorMsg": [],
+        "prefix": ";",
+        "lang": "en"
+    },
+    {
+        "guild_id": "466619527036403722",
+        "welcomeMsg": [],
+        "welcomeChannel": "general",
+        "errorMsg": [],
+        "prefix": ";",
+        "lang": "en"
+    },
+    {
+        "guild_id": "482945264827498497",
+        "welcomeMsg": [],
+        "welcomeChannel": "general",
+        "errorMsg": [],
+        "prefix": ";",
+        "lang": "en"
+    },
+    {
+        "guild_id": "511878233873055745",
+        "welcomeMsg": [],
+        "welcomeChannel": "general",
+        "errorMsg": [],
+        "prefix": ";",
+        "lang": "en"
+    },
+    {
+        "guild_id": "516185163839963146",
+        "welcomeMsg": [],
+        "welcomeChannel": "general",
+        "errorMsg": [],
+        "prefix": ";",
+        "lang": "en"
+    }
+]
