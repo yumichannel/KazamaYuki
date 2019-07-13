@@ -24,7 +24,7 @@
     "google-auth-library": "^4.2.5",
     "google-translate-api": "^2.3.0",
     "googleapis": "^40.0.1",
-    "node-opus": "^0.3.1",
+    "node-opus": "^0.3.2",
     "password-generator": "^2.2.0",
     "readline-sync": "^1.4.9",
     "snekfetch": "^4.0.4",
