@@ -23,7 +23,7 @@ module.exports = class Bot {
         this.client.update_data = function(){
             fs.writeFile("models/database.json",JSON.stringify(this.data.array()),{encoding:"utf8"},(err)=>{
                 if(err){
-                    console.log(err) 
+                    console.log(err)
                 }
             })
         }
