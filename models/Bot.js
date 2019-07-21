@@ -61,8 +61,28 @@ module.exports = class Bot {
         })
         .on('guildBanAdd',()=>{})
         .on('guildBanRemove',()=>{})
-        .on('guildCreate',()=>{})
-        .on('guildDelete',()=>{})
+        .on('guildCreate',async (g)=>{
+            let data = await read_data();
+            let new_data = {
+                guild_id:  g.id,
+                welcomeMsg: [],
+                welcomeChannel: [
+                    "general"
+                ],
+                errorMsg: [
+                    "Unfortunely,It's error"
+                ],
+                prefix: "!",
+                lang: "en"
+            }
+            data.push(new_data)
+            this.client.data.set(g.id,new_data)
+
+        })
+        .on('guildDelete',(g)=>{
+            this.client.data.delete(g.id);
+            this.client.update_data();
+        })
         .on('guildIntegrationsUpdate',()=>{})
         .on('guildMemberAdd',async (member)=>{
             let channel = member.guild.channels.find(c=>{
@@ -172,38 +192,46 @@ module.exports = class Bot {
             let option = params[1];
             switch (option) {
                 case "queue":{
-                    msg.channel.send(msg.client.mplayer.get(msg.guild.id).queue.map((i,j)=>`[${j}. ${i.name}`).join("\n"),{code:true})
+                    msg.channel.send(msg.client.mplayer.get(msg.guild.id).queue.map((i,j)=>`[${j}. ${i.name}]`).join("\n"),{code:true})
                     break;}
                 case "loop":{
+                    break;
                     if(!msg.member.voiceChannel) return msg.channel.send("Join voice first!",{code:true})
-                    let mode = params[2].toLowerCase()
-                    let player = this.client.mplayer.get(msg.guild.id)
-                    if(["all","once","none"].indexOf(mode)!=-1){
-                        player.loop = mode
-                        this.client.mplayer.set(msg.guild.id,player)
-                        msg.channel.send(`Loop mode: ${mode}`,{code:true})
-                    }else{
-                        msg.channel.send("```Invalid loop mode. Accept 'all','once' or 'none'```")
+
+                    let modeTxt = ['none','only','all']
+                    let mode = params[2];
+                    if(!isNaN(mode)){
+                        mode = parseInt(mode);
+                        if(mode>=0 && mode<=2){
+                            let player = this.client.mplayer.get(msg.guild.id)
+                            player.loop = mode
+                            this.client.mplayer.set(msg.guild.id,player)
+                            msg.channel.send(`\`Loop mode: ${modeTxt[mode]}\``)
+                        }
                     }
+                    break;
                 }
                 case "join":{
                     if(!msg.member.voiceChannel) return msg.channel.send("Join voice first!",{code:true})
-                    if(msg.client.mplayer.has(msg.guild.id)) return
+                    if(msg.client.mplayer.has(msg.guild.id))
+                        return msg.channel.send(`Already joined ${msg.client.mplayer.get(msg.guild.id).stream.channel.name}`)
                     msg.member.voiceChannel.join().then(v=>{
                         this.client.mplayer.set(msg.guild.id,{
                             stream: v,
                             queue: [],
                             playing: null,
-                            loop: "all"
+                            loop: 0,    //0: no loop; 1: loop once; 2:loop all
+                            commandChannel: msg.channel.id
                         })
-                        console.log(`Joined ${msg.member.voiceChannel.name}`)
+                        console.log(`Joined ${v.channel.name}`)
                     })
                     break;}
                 case "leave":{
                     if(!msg.member.voiceChannel) return msg.channel.send("Join voice first!",{code:true})
-                    msg.member.voiceChannel.leave();
                     this.client.mplayer.delete(msg.guild.id)
-                    break}
+                    msg.member.voiceChannel.leave();
+                    break
+                }
                 case "play":{
                     if(!msg.member.voiceChannel) return msg.channel.send("Join voice first!",{code:true})
                     if(!params[2])  return
@@ -240,6 +268,7 @@ module.exports = class Bot {
                             .setDescription(`\`\`\`Added ${item.name} at position ${player.queue.length}\`\`\``)
                             .setColor("#23b841"))
                         }else{
+                            player.queue.push(item)
                             player.playing = item;
                             this.client.mplayer.set(msg.guild.id,player)
                             this.play(msg,player.stream,item)
@@ -250,25 +279,45 @@ module.exports = class Bot {
                     break
                 }
                 case "playlist":
+                        if(!msg.member.voiceChannel) return msg.channel.send("Join voice first!",{code:true})
                     break
                 case "delete":{
+                    if(!msg.member.voiceChannel) return msg.channel.send("Join voice first!",{code:true})
                     let player = this.client.mplayer.get(msg.guild.id)
                     let num = parseInt(params[2])
                     if(!isNaN(num)){
                         if(num>=0 && num<player.queue.length){
                             let deleted = player.queue.splice(num,1)
+                            console.log('deleted');
                             this.client.mplayer.set(msg.guild.id,player)
                             msg.channel.send("Removed: "+deleted.name)
                         }
                     }
                     break
                 }
-                case "skip":{
+                case "next":{
+                    if(!msg.member.voiceChannel) return msg.channel.send("Join voice first!",{code:true})
                     let player = this.client.mplayer.get(msg.guild.id)
                     if(player.playing){
                         player.stream.dispatcher.end()
                     }
-                    break}
+                    break
+                }
+                case "skip":{
+                    if(!msg.member.voiceChannel) return msg.channel.send("Join voice first!",{code:true})
+                    let player = this.client.mplayer.get(msg.guild.id)
+                    if(player.playing){
+                        if(player.loop==2){
+                            player.playing = null;
+                            this.client.mplayer.set(msg.guild.id,player)
+                            player.stream.dispatcher.end()
+                        }
+                        if(player.loop==1){
+                            player.playing
+                        }
+                    }
+                    break;
+                }
                 default:
                     break;
             }
@@ -282,7 +331,9 @@ module.exports = class Bot {
                 em.setDescription("Upload by "+item.uploader)
                 em.setFooter(`Duration: ${item.time}`)
                 em.setColor("#7ab4ff")
-                msg.channel.send(em)
+                if(this.client.mplayer.get(msg.guild.id).loop!=1){
+                    msg.channel.send(em)
+                }
                 stream.playOpusStream(await ytdl(item.url,{filter:"audioonly"}))
                 .on("end",()=>{
                     let player = this.client.mplayer.get(msg.guild.id)
@@ -293,18 +344,21 @@ module.exports = class Bot {
                         .setColor("#ff4040")
                         .setDescription("End Of Queue"))
                     }else{
-                        let next = null
-                        if(player.loop=="once"){
-                            next = item
+                        if(player.playing == null){
+                            if(player.loop!=0){
+                                player.playing = player.queue.shift()
+                            }
                         }else{
-                            next = player.queue.shift()
-                            if(player.loop=="all"){
+                            if(player.loop==2){
                                 player.queue.push(item)
+                                player.playing = player.queue.shift()
+                            }
+                            if(player.loop==0){
+                                player.playing = player.queue.shift()
                             }
                         }
-                        player.playing = next
                         this.client.mplayer.set(msg.guild.id,player)
-                        this.play(msg,stream,next)
+                        this.play(msg,stream,player.playing)
                     }
                 })
             } catch (error) {
