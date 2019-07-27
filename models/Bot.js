@@ -195,7 +195,6 @@ module.exports = class Bot {
                     msg.channel.send(msg.client.mplayer.get(msg.guild.id).queue.map((i,j)=>`[${j}. ${i.name}]`).join("\n"),{code:true})
                     break;}
                 case "loop":{
-                    break;
                     if(!msg.member.voiceChannel) return msg.channel.send("Join voice first!",{code:true})
 
                     let modeTxt = ['none','only','all']
@@ -210,6 +209,17 @@ module.exports = class Bot {
                         }
                     }
                     break;
+                }
+                case "stat":{
+                    let em = new Discord.RichEmbed();
+                    let player = this.client.mplayer.get(msg.guild.id)
+                    em.setTitle('MUSIK STAT')
+                    em.addField('Playing',`[${player.playing.name}](${player.playing.url})`)
+                    em.addField('In queue',`${player.queue.length}`,true)
+                    em.addField('Loop mode',`${['none','only','all'][parseInt(player.loop)]}`,true)
+                    em.setColor('purple')
+                    msg.channel.send(em)
+                    break
                 }
                 case "join":{
                     if(!msg.member.voiceChannel) return msg.channel.send("Join voice first!",{code:true})
@@ -228,8 +238,11 @@ module.exports = class Bot {
                     break;}
                 case "leave":{
                     if(!msg.member.voiceChannel) return msg.channel.send("Join voice first!",{code:true})
-                    this.client.mplayer.delete(msg.guild.id)
+                    let player = this.client.mplayer.get(msg.guild.id)
+                    player.queue = []
+                    this.client.mplayer.set(msg.guild.id,player)
                     msg.member.voiceChannel.leave();
+                    this.client.mplayer.delete(msg.guild.id)
                     break
                 }
                 case "play":{
@@ -259,7 +272,8 @@ module.exports = class Bot {
                             url: info.video_url,
                             name: info.title,
                             uploader: info.author.name,
-                            time: new Date(0,0,0,0,0,parseInt(info.length_seconds),0).toTimeString().substring(0,8)
+                            time: new Date(0,0,0,0,0,parseInt(info.length_seconds),0).toTimeString().substring(0,8),
+                            skip: false
                         }
                         if(player.playing){
                             player.queue.push(item)
@@ -278,9 +292,10 @@ module.exports = class Bot {
                     })
                     break
                 }
-                case "playlist":
-                        if(!msg.member.voiceChannel) return msg.channel.send("Join voice first!",{code:true})
+                case "playlist":{
+                    if(!msg.member.voiceChannel) return msg.channel.send("Join voice first!",{code:true})
                     break
+                }
                 case "delete":{
                     if(!msg.member.voiceChannel) return msg.channel.send("Join voice first!",{code:true})
                     let player = this.client.mplayer.get(msg.guild.id)
@@ -307,14 +322,9 @@ module.exports = class Bot {
                     if(!msg.member.voiceChannel) return msg.channel.send("Join voice first!",{code:true})
                     let player = this.client.mplayer.get(msg.guild.id)
                     if(player.playing){
-                        if(player.loop==2){
-                            player.playing = null;
-                            this.client.mplayer.set(msg.guild.id,player)
-                            player.stream.dispatcher.end()
-                        }
-                        if(player.loop==1){
-                            player.playing
-                        }
+                        player.playing.skip = true
+                        this.client.mplayer.set(msg.guild.id,player)
+                        player.stream.dispatcher.end()
                     }
                     break;
                 }
@@ -337,26 +347,27 @@ module.exports = class Bot {
                 stream.playOpusStream(await ytdl(item.url,{filter:"audioonly"}))
                 .on("end",()=>{
                     let player = this.client.mplayer.get(msg.guild.id)
-                    if(player.queue.length==0){
+                    if(player.queue.length <= 1 && player.loop!=1){
                         player.playing = null
                         this.client.mplayer.set(msg.guild.id,player)
                         msg.channel.send(new Discord.RichEmbed()
                         .setColor("#ff4040")
                         .setDescription("End Of Queue"))
                     }else{
-                        if(player.playing == null){
-                            if(player.loop!=0){
-                                player.playing = player.queue.shift()
-                            }
+                        if(player.loop==0){
+                            player.queue.shift()
                         }else{
-                            if(player.loop==2){
-                                player.queue.push(item)
-                                player.playing = player.queue.shift()
+                            if(player.loop==1){
+                                //do nothing
                             }
-                            if(player.loop==0){
-                                player.playing = player.queue.shift()
+                            if(player.loop==2){
+                                let item = player.queue.shift();
+                                if(!player.playing.skip){
+                                    player.queue.push(item)
+                                }
                             }
                         }
+                        player.playing = player.queue[0]
                         this.client.mplayer.set(msg.guild.id,player)
                         this.play(msg,stream,player.playing)
                     }
