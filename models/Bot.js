@@ -12,6 +12,7 @@ module.exports = class Bot {
         this.client = new Discord.Client();
         this.client.commands = new Discord.Collection();
         this.client.mplayer = new Discord.Collection();
+        this.client.caroGame = new Discord.Collection();
         this.client.data = new Discord.Collection();
         this.cd = new Discord.Collection();
         this.client.lewd_warning = function(msg){
@@ -108,7 +109,7 @@ module.exports = class Bot {
             if(message.author.bot) return;
             if(!message.content.startsWith(prefix)) return;
             var params = message.content.substring(prefix.length).split(" ")
-            var caller = params[0]
+            var caller = params[0] 
             // Is that command exist?
             if(!this.client.commands.has(caller)){
                 const errorMsg = this.client.data.get(guild.id).errorMsg
@@ -268,11 +269,12 @@ module.exports = class Bot {
                     }
                     let player = this.client.mplayer.get(msg.guild.id)
                     ytdls.getBasicInfo(url).then(info=>{
+                        let details = info.player_response.videoDetails
                         let item = {
                             url: info.video_url,
-                            name: info.title,
+                            name: details.title,
                             uploader: info.author.name,
-                            time: new Date(0,0,0,0,0,parseInt(info.length_seconds),0).toTimeString().substring(0,8),
+                            time: new Date(0,0,0,0,0,parseInt(details.lengthSeconds),0).toTimeString().substring(0,8),
                             skip: false
                         }
                         if(player.playing){
