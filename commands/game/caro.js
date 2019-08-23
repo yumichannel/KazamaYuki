@@ -39,26 +39,28 @@ const data = {
                 myGame.playing = true
                 caroGame.set(myGame.guildId,myGame)
                 let players = myGame.players
-                let first = Math.floor(Math.random()*1)
                 let nowp = players.shift()
                 let map = myGame.table
                 let mapId = null
                 msg.channel.send(`\`Match start! *${nowp.name}* go first\``)
                 let collector = msg.channel.createMessageCollector(
                     m => {
-                        return m && players.find(p => p.id == m.author.id)
+                        return m && nowp.id == m.author.id
                     }
                 )
                 collector.on('collect',message => {
                     if(message.content == "caro end match"){
                         collector.stop()
+                        endGame()
                         msg.channel.send(`Match stop`)
                     }
                     if(!message.content.startsWith('check')) return;
                     let arr = message.content.replace('check',"").trim().split(" ")
                     let x = arr[0]
                     let y = arr[1]
-                    if(x== 0 || y == 0) return msg.channel.send('`0 0 is not accepted, check again`');
+                    if(x== 0 || y == 0) return msg.channel.send('`check again`');
+                    if(x > 6 || y > 6) return msg.channel.send('`check again`');
+                    console.log(`${nowp.name} checks ${x} ${y}`)
                     if(mapId == null){
                         map = check(map,x,y,nowp.type)
                         msg.channel.send(map,{code:true}).then(m => {
@@ -76,6 +78,7 @@ const data = {
                     }
                     if(isWin(map,nowp.type,x-1,y-1)){
                         collector.stop()
+                        endGame()
                         return msg.channel.send(`${nowp.name} win`)
                     }
                     players.push(nowp);
@@ -102,8 +105,16 @@ const data = {
             arr2 = map.map(a => {
                 return a[c]
             })
-
-            if(hasContinue(arr1,symbol) || hasContinue(arr2,symbol)){
+            arr3 = getCross1(map,h,c)
+            map.map(row => {
+                return row.reverse()
+            })
+            arr4 = getCross1(map,h,6-c)
+            map.map(row => {
+                return row.reverse()
+            })
+            if(hasContinue(arr1,symbol) || hasContinue(arr2,symbol) 
+                || hasContinue(arr3,symbol) || hasContinue(arr4,symbol)){
                 return true
             }
             return false
@@ -124,6 +135,34 @@ const data = {
                 }
             }
             return false
+        }
+
+        function getCross1(arr,h,c){
+            let temp = []
+            if(h>=c){
+                let hs = h - c
+                let cs = 0
+                for(let i = hs; i < 6; i++){
+                    if(cs < 6){
+                        temp.push(arr[i][cs])
+                        cs++
+                    }
+                }
+            }else{
+                let cs = c - h
+                for(let i = 0; i < 6; i++){
+                    if(cs < 6){
+                        temp.push(arr[i][cs]);
+                        cs++
+                    }
+                }
+            }
+            return temp
+        }
+
+        function endGame(){
+            myGame.playing = false
+            myGame.players = []
         }
     }
 }

@@ -11,7 +11,7 @@ module.exports = function(message,mode){
         match_start: ['orange','Match has been started'],
         match_not_start: ['red','Match is not started yet'],
         need_player: ['orange','Match need at least two players'],
-        join: ['blue','Type `join caro` to join']
+        join: ['blue','Type `caro join` to join']
     }
 
     let em = new Discord.RichEmbed()
