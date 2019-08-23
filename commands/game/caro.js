@@ -63,14 +63,14 @@ const data = {
                     console.log(`${nowp.name} checks ${x} ${y}`)
                     if(mapId == null){
                         map = check(map,x,y,nowp.type)
-                        msg.channel.send(map,{code:true}).then(m => {
+                        msg.channel.send(render(map),{code:true}).then(m => {
                             mapId = m.id
                         })
                     }else{
                         map = check(map,x,y,nowp.type)
                         msg.channel.fetchMessage(mapId).then(m => {
                             m.delete().then(m2 => {
-                                m2.channel.send(map,{code:true}).then(m3 => {
+                                m2.channel.send(render(map),{code:true}).then(m3 => {
                                     mapId = m3.id
                                 })
                             })
@@ -85,8 +85,8 @@ const data = {
                     nowp = players.shift();
                 })
                 break;
-            case "stat":
-                console.log(caroGame.get(msg.guild.id))
+            case "map":
+                msg.channel.send(render(caroGame.get(msg.guild.id).table),{code:true})
                 break
             default:
                 break;
@@ -163,6 +163,37 @@ const data = {
         function endGame(){
             myGame.playing = false
             myGame.players = []
+        }
+
+        function render(map){
+            let table = "";
+            let hmax = map.length
+            let cmax = map[0].length
+            for(let i=0;i<=hmax;i++){
+                for(let j=0;j<=cmax;j++){
+                    if(i==0 && j==0){
+                        table += "0\t";
+                    }
+                    if(i==0 && j!=0){
+                        if(j==cmax){
+                            table += j+"\n"
+                        }else{
+                            table += `${j}  `
+                        }
+                    }
+                    if(i!=0 && j==0){
+                        table += `${i}\t`
+                    }
+                    if(i!=0 && j!=0){
+                        if(j==cmax){
+                            table += map[i-1][j-1] + "\n" 
+                        }else{
+                            table += map[i-1][j-1] + "  "
+                        }
+                    }
+                }
+            }
+            return table
         }
     }
 }
