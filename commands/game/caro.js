@@ -9,6 +9,7 @@ const data = {
     run: function(msg=new Discord.Message,params=[]){
         let caroGame = msg.client.caroGame
         let myGame
+        let size = 6
         if(!params || params.length == 0) return
         switch (params[1]) {
             case "start":
@@ -90,75 +91,261 @@ const data = {
                 break
             default:
                 break;
-
         }
-
-        function check(map,x,y,symbol){
+        function check(map,x,y,symbol){                                      
             if(map[x-1][y-1] == 0){
                 map[x-1][y-1] = symbol
             }
             return map;
         }
-        function isWin(map = [],symbol,h,c){
-            let arr1, arr2, arr3, arr4
-            arr1 = map[h]
-            arr2 = map.map(a => {
-                return a[c]
-            })
-            arr3 = getCross1(map,h,c)
-            map.map(row => {
-                return row.reverse()
-            })
-            arr4 = getCross1(map,h,6-c)
-            map.map(row => {
-                return row.reverse()
-            })
-            if(hasContinue(arr1,symbol) || hasContinue(arr2,symbol) 
-                || hasContinue(arr3,symbol) || hasContinue(arr4,symbol)){
-                return true
-            }
-            return false
+        function isWin(arr = [], symbol, h, c){
+            return checkRow(arr,symbol,h,c) || checkColumn(arr,symbol,h,c) || checkCross1(arr,symbol,h,c) || checkCross2(arr,symbol,h,c)
         }
-
-        function hasContinue(arr = [],symbol){
-            const len = arr.length
-            let count = 0
-            for(let i = 0; i < len; i++){
-                if(arr[i]==symbol){
+        
+        function checkCross1(arr = [], symbol, h, c){
+            let i = h;
+            let j = c;
+            let head = false;
+            let tail = false;
+            let count = 0;
+            while(i != -1 && j!=-1){
+                if(arr[i][j] == symbol){
                     count++;
                 }else{
-                    if(count>=4){
-                        return true
-                    }else{
-                        count = 0
+                    if(arr[i][j] != 0){
+                        head = true
                     }
                 }
+                i--;
+                j--;
+            }
+            i = h;
+            j = c;
+            while(i != size && j != size){
+                if(arr[i][j] == symbol){
+                    count++;
+                }else{
+                    if(arr[i][j] != 0){
+                        tail = true
+                        break
+                    }
+                }
+                i++
+                j++;
+            }
+            if(head || tail){
+                if(count-1 >= 5) return true
+            }
+            if(!head && !tail){
+                if(count-1 >=4) return true
             }
             return false
         }
 
-        function getCross1(arr,h,c){
-            let temp = []
-            if(h>=c){
-                let hs = h - c
-                let cs = 0
-                for(let i = hs; i < 6; i++){
-                    if(cs < 6){
-                        temp.push(arr[i][cs])
-                        cs++
+        function checkCross2(arr = [], symbol, h, c){
+            let i = h;
+            let j = c;
+            let head = false;
+            let tail = false;
+            let count = 0;
+            while(i != -1 && j != size){
+                if(arr[i][j] == symbol){
+                    count++;
+                }else{
+                    if(arr[i][j] == 0){
+                        head = false
+                    }else{
+                        head = true
                     }
                 }
-            }else{
-                let cs = c - h
-                for(let i = 0; i < 6; i++){
-                    if(cs < 6){
-                        temp.push(arr[i][cs]);
-                        cs++
-                    }
-                }
+                i--;
+                j++;
             }
-            return temp
+            i = h;
+            j = c;
+            while(i != size && j != -1){
+                if(arr[i][j] == symbol){
+                    count++;
+                }else{
+                    if(arr[i][j] == 0){
+                        tail = false
+                    }else{
+                        tail = true
+                    }
+                }
+                i++;
+                j--;
+            }
+            if(head || tail){
+                if(count-1 >= 5) return true
+            }
+            if(!head && !tail){
+                if(count-1 >=4) return true
+            }
+            return false
         }
+
+        function checkRow(arr = [], symbol, h, c){
+            let i = c;
+            let head = false;
+            let tail = false;
+            let count = 0;
+            while(i != -1){
+                if(arr[h][i] == symbol){
+                    count++;
+                }else{
+                    if(arr[h][i] != 0){
+                        head = true;
+                        break;
+                    }
+                }
+                i--
+            }
+            i = c;
+            while(i != size){
+                if(arr[h][i] == symbol){
+                    count++;
+                }else{
+                    if(arr[h][i] != 0){
+                        tail = true;
+                        break;
+                    }
+                }
+                i++
+            }
+            if(head || tail){
+                if(count-1 >= 5) return true
+            }
+            if(!head && !tail){
+                if(count-1 >=4) return true
+            }
+            return false
+        }
+
+      
+        function checkColumn(arr = [], symbol, h, c){
+            let i = h;
+            let head = false;
+            let tail = false;
+            let count = 0;
+            while(i != -1){
+                if(arr[i][c] == symbol){
+                    count++;
+                }else{
+                    if(arr[i][c] != 0){
+                        head = true;
+                        break;
+                    }
+                }
+                i--
+            }
+            i = h;
+            while(i != size){
+                if(arr[i][c] == symbol){
+                    count++;
+                }else{
+                    if(arr[i][c] != 0){
+                        tail = true;
+                        break;
+                    }
+                }
+                i++
+            }
+            if(head || tail){
+                if(count-1 >= 5) return true
+            }
+            if(!head && !tail){
+                if(count-1 >= 4) return true
+            }
+            return false
+        }
+
+        // function isWin(map = [],symbol,h,c){
+        //     let arr1, arr2, arr3, arr4
+        //     arr1 = map[h]
+        //     arr2 = map.map(a => {
+        //         return a[c]
+        //     })
+        //     arr3 = getCross1(map,h,c)
+        //     map.map(row => {
+        //         return row.reverse()
+        //     })
+        //     arr4 = getCross1(map,h,size-1-c)
+        //     map.map(row => {
+        //         return row.reverse()
+        //     })
+        //     if(hasContinue(arr1,symbol,h,c) || hasContinue(arr2,symbol,h,c) 
+        //         || hasContinue(arr3,symbol,h,c) || hasContinue(arr4,symbol,h,c)){
+        //         return true
+        //     }
+        //     return false
+        //     // console.log(arr1,arr2,arr3,arr4);
+        //     return false;
+        // }
+
+        /* A check array function but i keep it  */
+        // function hasContinue(arr = [],symbol){
+        //     console.log(arr)
+        //     let head = 0
+        //     let tail = 0
+        //     let count = 0
+        //     let len = arr.length
+        //     for(let i = 0; i < len; i++){
+        //         if(arr[i]==0){
+        //             head = 0
+        //             count = 0
+        //         }else{
+        //             if(arr[i]==symbol){
+        //                 count++
+        //             }else{
+        //                 head = -1;
+        //                 count = 0;
+        //             }
+        //             if(i+1<len){
+        //                 if(arr[i+1]==0){
+        //                     tail = 0
+        //                     if((head==-1 && count>=5) || (head==0 && count>=4)){
+        //                         // console.log(arr[i],head,tail,count,1)
+        //                     }
+        //                 }else{
+        //                     if(arr[i+1]==symbol){
+        //                         if((head==-1 && count>=4) || (head==0 && count>=3)){
+        //                             //  console.log(arr[i],head,tail,count,2)
+        //                         }
+        //                     }else{
+        //                         if(count>=5){
+        //                             //  console.log(arr[i],head,tail,count,3)
+        //                         }
+        //                     }
+        //                 }
+        //             }
+        //         }
+                
+        //         console.log(arr[i],head,tail,count)
+        //     }                                                                    
+        // }
+        // function getCross1(arr,h,c){
+        //     let temp = []
+        //     if(h>=c){
+        //         let hs = h - c
+        //         let cs = 0
+        //         for(let i = hs; i < 6; i++){
+        //             if(cs < 6){
+        //                 temp.push(arr[i][cs])
+        //                 cs++
+        //             }
+        //         }
+        //     }else{
+        //         let cs = c - h
+        //         for(let i = 0; i < 6; i++){
+        //             if(cs < 6){
+        //                 temp.push(arr[i][cs]);
+        //                 cs++
+        //             }
+        //         }
+        //     }
+        //     return temp
+        // }
 
         function endGame(){
             myGame.playing = false
