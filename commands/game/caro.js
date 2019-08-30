@@ -2,6 +2,18 @@ const Discord = require('discord.js');
 const Command = require('../../models/Command');
 const CaroGame = require('../../models/CaroGame');
 const caroMessage = require('../../utils/caro_message');
+const aton = {
+    A:1,B:2,C:3,D:4,E:5,F:6,G:7,H:8
+}
+const ntoa = [
+    null,'A','B','C','D','E','F','G','H'
+]
+const ntoe = [
+    ':zero:',':one:',':two:',':three:',':four:',':five:',':six:',':seven:',':eight:'
+]
+const ctoe = [
+    null,':x:',':o:'
+]
 const data = {
     caller: "caro",
     cd: 0,
@@ -9,7 +21,7 @@ const data = {
     run: function(msg=new Discord.Message,params=[]){
         let caroGame = msg.client.caroGame
         let myGame
-        let size = 6
+        let size = 8
         if(!params || params.length == 0) return
         switch (params[1]) {
             case "start":
@@ -30,7 +42,7 @@ const data = {
                     type: myGame.players.length+1
                 }
                 myGame.players.push(newp)
-                msg.channel.send("",{embed:{description:`*${newp.name}* joined caro game with symbol \`${newp.type}\``}})
+                msg.channel.send("",{embed:{description:`*${newp.name}* joined caro game with symbol ${ctoe[newp.type]}`}})
                 break;
             case "match":
                 if(!caroGame.has(msg.guild.id)) return caroMessage(msg,"game_not_start")
@@ -55,23 +67,26 @@ const data = {
                         endGame()
                         msg.channel.send(`Match stop`)
                     }
-                    if(!message.content.startsWith('check')) return;
-                    let arr = message.content.replace('check',"").trim().split(" ")
-                    let x = arr[0]
+                    // if(!message.content.startsWith('check')) return;
+                    // let arr = message.content.replace('check',"").trim().split(" ")
+                    let checkPattern = /^[A-z]{1}-[1-8]{1}$/
+                    if(!message.content.match(checkPattern)) return
+                    let arr = message.content.replace('check',"").trim().split("-")
+                    let x = aton[arr[0].toUpperCase()]
                     let y = arr[1]
                     if(x== 0 || y == 0) return msg.channel.send('`check again`');
-                    if(x > 6 || y > 6) return msg.channel.send('`check again`');
+                    if(x > size || y > size) return msg.channel.send('`check again`');
                     console.log(`${nowp.name} checks ${x} ${y}`)
                     if(mapId == null){
                         map = check(map,x,y,nowp.type)
-                        msg.channel.send(render(map),{code:true}).then(m => {
+                        msg.channel.send(render(map),{code:false}).then(m => {
                             mapId = m.id
                         })
                     }else{
                         map = check(map,x,y,nowp.type)
                         msg.channel.fetchMessage(mapId).then(m => {
                             m.delete().then(m2 => {
-                                m2.channel.send(render(map),{code:true}).then(m3 => {
+                                m2.channel.send(render(map),{code:false}).then(m3 => {
                                     mapId = m3.id
                                 })
                             })
@@ -87,7 +102,7 @@ const data = {
                 })
                 break;
             case "map":
-                msg.channel.send(render(caroGame.get(msg.guild.id).table),{code:true})
+                msg.channel.send(render(caroGame.get(msg.guild.id).table))
                 break
             default:
                 break;
@@ -100,8 +115,7 @@ const data = {
         }
         function isWin(arr = [], symbol, h, c){
             return checkRow(arr,symbol,h,c) || checkColumn(arr,symbol,h,c) || checkCross1(arr,symbol,h,c) || checkCross2(arr,symbol,h,c)
-        }
-        
+        }     
         function checkCross1(arr = [], symbol, h, c){
             let i = h;
             let j = c;
@@ -142,7 +156,6 @@ const data = {
             }
             return false
         }
-
         function checkCross2(arr = [], symbol, h, c){
             let i = h;
             let j = c;
@@ -183,7 +196,6 @@ const data = {
             }
             return false
         }
-
         function checkRow(arr = [], symbol, h, c){
             let i = c;
             let head = false;
@@ -220,8 +232,6 @@ const data = {
             }
             return false
         }
-
-      
         function checkColumn(arr = [], symbol, h, c){
             let i = h;
             let head = false;
@@ -258,12 +268,10 @@ const data = {
             }
             return false
         }
-
         function endGame(){
             myGame.playing = false
             myGame.players = []
         }
-
         function render(map){
             let table = "";
             let hmax = map.length
@@ -271,23 +279,23 @@ const data = {
             for(let i=0;i<=hmax;i++){
                 for(let j=0;j<=cmax;j++){
                     if(i==0 && j==0){
-                        table += "0\t";
+                        table += ntoe[i];
                     }
                     if(i==0 && j!=0){
                         if(j==cmax){
-                            table += j+"\n"
+                            table += `${ntoe[j]}`+"\n"
                         }else{
-                            table += `${j}  `
+                            table += `${ntoe[j]}`
                         }
                     }
                     if(i!=0 && j==0){
-                        table += `${i}\t`
+                        table += `:regional_indicator_${ntoa[i].toLowerCase()}:`
                     }
                     if(i!=0 && j!=0){
                         if(j==cmax){
-                            table += map[i-1][j-1] + "\n" 
+                            table += (ctoe[map[i-1][j-1]] || ':stop_button:' ) + "\n"
                         }else{
-                            table += map[i-1][j-1] + "  "
+                            table += ctoe[map[i-1][j-1]] || ':stop_button:'
                         }
                     }
                 }
