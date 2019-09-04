@@ -52,23 +52,32 @@ const data = {
                 myGame.playing = true
                 caroGame.set(myGame.guildId,myGame)
                 let players = myGame.players
-                let nowp = players.shift()
+                let ran = Math.floor(Math.random()*2);
+                let nowp
+                if(ran == 0){
+                    nowp = players.pop()
+                }
+                if(ran == 1){
+                    nowp = players.shift()
+                }
                 let map = myGame.table
                 let mapId = null
-                msg.channel.send(`\`Match start! *${nowp.name}* go first\``)
+                msg.channel.send(`\`Match start! The first is ...\``).then(m=>{
+                    setTimeout(() => {
+                        m.edit(`\`Match start! The first is ... *${nowp.name}*\``)
+                    }, 3000);
+                })
                 let collector = msg.channel.createMessageCollector(
                     m => {
                         return m && nowp.id == m.author.id
                     }
                 )
                 collector.on('collect',message => {
-                    if(message.content == "caro end match"){
+                    if(message.content == "Force end match"){
                         collector.stop()
                         endGame()
                         msg.channel.send(`Match stop`)
                     }
-                    // if(!message.content.startsWith('check')) return;
-                    // let arr = message.content.replace('check',"").trim().split(" ")
                     let checkPattern = /^[A-z]{1}-[1-8]{1}$/
                     if(!message.content.match(checkPattern)) return
                     let arr = message.content.replace('check',"").trim().split("-")
@@ -279,7 +288,7 @@ const data = {
             for(let i=0;i<=hmax;i++){
                 for(let j=0;j<=cmax;j++){
                     if(i==0 && j==0){
-                        table += ntoe[i];
+                        table += ':no_entry_sign:';
                     }
                     if(i==0 && j!=0){
                         if(j==cmax){
