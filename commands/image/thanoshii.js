@@ -1,5 +1,7 @@
 const Discord = require('discord.js');
 const Command = require('../../models/Command');
+const Canvas = require('canvas');
+var snekfetch = require('snekfetch');
 const data = {
     caller: "thanoshii",
     cd: 10,
@@ -19,7 +21,7 @@ const data = {
                 A.push(1);
             }
             while(zz>0){
-                let pos = Math.floor(Math.random()*200)
+                let pos = Math.floor(Math.random()*200);
                 if(A[pos]==1){
                     context.clearRect(i, pos, 1, 1);
                     A[pos]==0

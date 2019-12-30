@@ -30,7 +30,7 @@ module.exports = class Bot {
         }
         this.client
         .once('ready',async ()=>{
-            this.client.user.setActivity("LOLOLOLOLOL",{
+            this.client.user.setActivity(":sagirisad:",{
                 type: "LISTENING"
             })
             
