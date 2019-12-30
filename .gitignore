@@ -9,3 +9,5 @@ test.js
 test.html
 image.png
 model/Database.json
+/.idea
+/models/database.json
