@@ -7,6 +7,7 @@ module.exports = class Command{
         this.help = data.help || "Nothing"
         this.hide = data.hide || false
         this.cd = data.cd || 1
+        this.translate = data.translate || null
         this.run = data.run || function(){return}
     }
     setCategory(cate){

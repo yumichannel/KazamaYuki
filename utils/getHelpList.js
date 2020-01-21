@@ -12,5 +12,6 @@ module.exports = function(data = new Discord.Collection){
         })
         embed.addField(category,commandsStr.join(', '))
     })
+    embed.setTitle("List of available command");
     return embed;
 }

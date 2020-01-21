@@ -1,5 +1,5 @@
 {
-  "name": "YumiBot",
+  "name": "sagiribot",
   "description": "",
   "version": "0.0.0",
   "main": "main.js",
@@ -30,5 +30,12 @@
     "snekfetch": "^4.0.4",
     "ytdl-core": "^0.28.3",
     "ytdl-core-discord": "^1.0.3"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yumichannel/SagiriBot.git"
   }
 }

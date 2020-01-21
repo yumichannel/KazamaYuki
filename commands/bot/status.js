@@ -22,5 +22,5 @@ const data = {
             m.edit(em);
         })
     }
-}
+};
 module.exports = new Command(data)
