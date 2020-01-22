@@ -9,6 +9,7 @@ const ytdls = require('ytdl-core')
 const snek = require('snekfetch')
 module.exports = class Bot {
     constructor(cfg) {
+        this.startChannel = cfg.startChannel;
         this.ready = false;
         this.client = new Discord.Client();
         this.client.commands = new Discord.Collection();
@@ -45,6 +46,16 @@ module.exports = class Bot {
                     this.client.data = data;
                     this.ready = true;
                     console.log(`Loaded custom data of ${data.size} guild`);
+                    if (this.startChannel) {
+                        this.client.channels.get(this.startChannel).send(`onee-chan, onii-chan, Sagiri đã online rồi đây!`)
+                        .then(message => {
+                            message.channel.send('',{embed: {
+                                image: {
+                                    url: 'https://i.imgur.com/VRXDYp2.gif'
+                                }
+                            }})
+                        })
+                    }
                 })
             })
             .on('channelCreate', () => {
