@@ -4,8 +4,8 @@ const load_cmd = require('../utils/load_command.js')
 const load_data = require('../utils/load_data.js')
 const translater = require('./config').translate
 var read_data = require('../utils/read_data')
-const ytdl = require('ytdl-core-discord')
-const ytdls = require('ytdl-core')
+// const ytdl = require('ytdl-core-discord')
+// const ytdls = require('ytdl-core')
 const snek = require('snekfetch')
 module.exports = class Bot {
     constructor(cfg) {
@@ -200,11 +200,7 @@ module.exports = class Bot {
                     
                     // Try to execute command
                     try {
-                        if (caller == "musik") {
-                            this.play_musik(message, params)
-                        } else {
-                            this.client.commands.get(caller).run(message, params)
-                        }
+                        this.client.commands.get(caller).run(message, params)
                     } catch (error) {
                         console.log(error)
                     }
