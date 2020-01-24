@@ -10,8 +10,7 @@ module.exports = {
         'bot',
         'game',
         'admin',
-        'creator',
-        'music'
+        'creator'
     ],
     language:[
         "en",
