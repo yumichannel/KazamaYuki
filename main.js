@@ -33,8 +33,6 @@ connector.on('message', message => {
                 },1000)
             })
         }
-    } else {
-        console.log(message.content);
     }
 })
 connector.login(process.env.connectToken);

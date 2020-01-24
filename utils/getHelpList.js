@@ -10,7 +10,11 @@ module.exports = function(data = new Discord.Collection){
                 commandsStr.push(`[${key}](http://yumichannel.herokuapp.com)`)
             }
         })
-        embed.addField(category,commandsStr.join(', '))
+        if (commandsStr.length == 0) {
+            embed.addField(category,'No command available')
+        }else{
+            embed.addField(category,commandsStr.join(', '))
+        }
     })
     embed.setTitle("List of available command");
     return embed;
