@@ -8,15 +8,17 @@ const data = {
         if (!guild) return console.log(1);
         var channel = guild.channels.get(params[1])
         if (!channel) return console.log(2);
-        if (params[2].match(/^\d{1,}$/)){		
-			setTimeout(()=>{					
-				params.splice(0,3);
-				let content = msg.content.substring(1)
-                    .replace(params[0],'')
-                    .replace(params[1],'')
-                    .replace(params[2],'').trim();
-				channel.send(content);
-			},parseInt(params[2]));
+        var prefix = msg.client.data.get(guild.id).prefix;
+        if (params[2].match(/^\d{1,}$/)){	
+            let _time = parseInt(params[2]);	
+			setTimeout(()=>{
+                let content = msg.content.substring(prefix.length);
+                content.replace(params[0],'').replace(params[1],'').replace(params[2],'').trim();
+                channel.send(content);
+                let m = (_time / 60).toFixed(0);
+                let s = _time - m*60;
+                msg.channel.send(`>>> Message will be triggered in ${m} munites and ${s} seconds`);
+			},parseInt(_time));
 		}
     }
 }

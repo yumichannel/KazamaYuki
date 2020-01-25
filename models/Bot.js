@@ -7,10 +7,12 @@ var read_data = require('../utils/read_data')
 // const ytdl = require('ytdl-core-discord')
 // const ytdls = require('ytdl-core')
 const snek = require('snekfetch')
+const defaultAction = require('./DefaultAction');
 module.exports = class Bot {
     constructor(cfg) {
         this.startChannel = cfg.startChannel;
         this.ready = false;
+        this.sleep = false;
         this.client = new Discord.Client();
         this.client.commands = new Discord.Collection();
         this.client.caroGame = new Discord.Collection();
@@ -138,6 +140,10 @@ module.exports = class Bot {
             .on('message', (message) => {
                 if (message.channel.type === "dm") return;
                 if (!this.ready) return console.log('Bot is not ready.');
+                // if (defaultAction.actionList[message.content]) {
+                //     defaultAction._do(defaultAction.actionList[message.content]);
+                //     return;
+                // }
                 const guild = message.guild
                 const channel = message.channel
                 const content = message.content
