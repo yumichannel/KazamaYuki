@@ -5,7 +5,7 @@ const data = {
     cd: 0,
     run: function(message=new Discord.Message,params=[]){
         let text = message.content.substring(params[0].length+2);
-        let embed = new Discord.RichEmbed;
+        let embed = new Discord.MessageEmbed;
         try {
             let ev = eval(text)
             if(typeof ev !== 'string'){

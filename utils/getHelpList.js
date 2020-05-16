@@ -1,7 +1,7 @@
 const categoryList = require('../models/config').cmdType
 const Discord = require('discord.js')
 module.exports = function(data = new Discord.Collection){
-    let embed = new Discord.RichEmbed;
+    let embed = new Discord.MessageEmbed;
     categoryList.forEach(category => {
         if(category == 'creator') return
         let commandsStr = []

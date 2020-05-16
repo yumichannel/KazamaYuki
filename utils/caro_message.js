@@ -14,7 +14,7 @@ module.exports = function(message,mode){
         join: ['blue','Type `caro join` to join']
     }
 
-    let em = new Discord.RichEmbed()
+    let em = new Discord.MessageEmbed()
     em.setColor(config[mode][0])
     em.setDescription(config[mode][1])
     message.channel.send(em);

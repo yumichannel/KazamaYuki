@@ -54,7 +54,7 @@ module.exports = class Bot {
                     //         console.error(error);
                     //     }
                     // }, null, true, 'Asia/Ho_Chi_Minh'));
-                    console.log(`Loaded custom data of ${data.size} guild`);
+                    console.log(`Loaded custom data of ${this.client.data.size} guild`);
 
                     if (this.startChannel) {
                         let _startChannel = await this.client.channels.cache.get(this.startChannel);
@@ -128,8 +128,8 @@ module.exports = class Bot {
                     const command = this.client.commands.get(caller);
                     const helpReg = new RegExp(`^[${prefix}${cfg.prefix}]${caller}\\s{1}help$`);
                     if (content.match(helpReg)) {
-                        var em = new Discord.MessageEmbed();
-                        var num = Math.floor(Math.random() * 256);
+                        let em = new Discord.MessageEmbed();
+                        let num = Math.floor(Math.random() * 256);
                         em.setColor([num, num, num]);
                         em.setTitle(`How to use \`${caller}\``);
                         em.setDescription(command.help);

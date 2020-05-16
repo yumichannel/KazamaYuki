@@ -16,12 +16,12 @@ const data = {
             ]
         }
         var uwin =()=>{
-            var embed = new Discord.RichEmbed()
+            var embed = new Discord.MessageEmbed()
             embed.setDescription(answer.win[0])
             msg.channel.send(embed)
         }
         var ulose =()=>{
-            var embed = new Discord.RichEmbed()
+            var embed = new Discord.MessageEmbed()
             embed.setDescription(answer.lose[0])
             msg.channel.send(embed);
         }
@@ -42,7 +42,7 @@ const data = {
             msg.channel.send(list[choice])
             
             if(last == list[choice]){
-                var embed = new Discord.RichEmbed()
+                var embed = new Discord.MessageEmbed()
                 embed.setDescription(answer.draw[0])
                 msg.channel.send(answer.draw[0])
             }else{
