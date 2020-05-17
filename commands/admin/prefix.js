@@ -4,6 +4,7 @@ const translater = require('../../models/config').translate.prefix_warn
 const data = {
     caller: "prefix",
     cd: 10,
+    enable: true,
     run: function(msg=new Discord.Message,params=[]){
         var prefix = params[1]
         msg.client.data.get(msg.guild.id).setPrefix(prefix)

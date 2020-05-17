@@ -5,6 +5,7 @@ const Canvas = require('canvas');
 const data = {
     caller: "slap",
     cd: 10,
+    enable: true,
     run: async function (msg, param) {
         let text = "";
         const {body: buffer1} = await snek.get(msg.author.avatarURL({

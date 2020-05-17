@@ -3,6 +3,7 @@ const Command = require('../../models/Command');
 const data = {
     caller: "pat",
     cd: 5,
+    enable: true,
     translate: require('../../models/lang/pat.json'),
     run: async function (msg, params) {
         const lang = msg.client.data.get(msg.guild.id).lang;
@@ -18,9 +19,13 @@ const data = {
         if (params[1] === undefined) {
             text = `${pater.displayName} ${this.translate[lang].trypat}`
         } else {
-            text = (pater.id == patted.id) ?
-                `${msg.guild.members.get(msg.client.user.id).displayName} ${this.translate[lang].patpat} ${pater.displayName}` :
-                `${pater.displayName} ${this.translate[lang].patpat} ${patted.displayName}`
+            let _ran = Math.floor(Math.random() * 2);
+            text = pater.id == patted.id
+                ? (_ran == 1
+                    ? `${msg.guild.members.cache.get(msg.client.user.id).displayName} ${this.translate[lang].patpat} ${pater.displayName}`
+                    : `${pater.displayName} ${this.translate[lang].trypat}`)
+                : `${pater.displayName} ${this.translate[lang].patpat} ${patted.displayName}`
+
         }
         let embed = new Discord.MessageEmbed()
             .setDescription(text)

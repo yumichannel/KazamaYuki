@@ -3,6 +3,7 @@ const Command = require('../../models/Command');
 const data = {
     caller: "avatar",
     cd: 10,
+    enable: true,
     run: async function (msg, params) {
         const mention = msg.mentions.members;
         let url = "";

@@ -6,6 +6,7 @@ const Gif = require('gifencoder');
 const data = {
     caller: "trigger",
     cd: 10,
+    enable: true,
     run: async function (message, params) {
         let args = params[1];
         if (message.mentions.members.size === 0) {

@@ -3,6 +3,7 @@ const Command = require('../../models/Command');
 const data = {
     caller: "status",
     cd: 1,
+    enable: true,
     run: function (msg = new Discord.Message, params = []) {
         var em = new Discord.MessageEmbed();
         em.setThumbnail(msg.client.user.displayAvatarURL());

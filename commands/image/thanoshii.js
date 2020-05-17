@@ -5,6 +5,7 @@ let snekfetch = require('snekfetch');
 const data = {
     caller: "thanoshii",
     cd: 10,
+    enable: true,
     run: async function (msg, params) {
         const canvas = Canvas.createCanvas(200, 200);
         const context = canvas.getContext('2d');

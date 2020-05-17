@@ -1,8 +1,9 @@
 const Discord = require('discord.js');
 const Command = require('../../models/Command');
 const data = {
-    caller: "onetwothree",
+    caller: "rsp",
     cd: 10,
+    enable: true,
     run: function(msg=new Discord.Message,params=[]){
         const answer={
             win:[

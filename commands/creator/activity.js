@@ -3,6 +3,7 @@ const Command = require('../../models/Command');
 const data = {
     caller: "activity",
     cd: 1,
+    enable: true,
     run: function(msg=new Discord.Message,params=[]){
         const act=["Playing","Watching","Listening","Streaming"];
         const actEmoji=["0⃣","1⃣","2⃣","3⃣"];

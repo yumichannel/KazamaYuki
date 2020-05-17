@@ -5,6 +5,7 @@ require('../../models/Bot');
 const data = {
     caller: "neko",
     cd: 1,
+    enable: true,
     run: async function (msg, params) {
         let src = 'https://nekos.life/';
         let lewd = false;
