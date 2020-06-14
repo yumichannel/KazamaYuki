@@ -6,7 +6,6 @@ const translator = require('./config').translate;
 var read_data = require('../utils/read_data');
 const snek = require('snekfetch');
 const defaultAction = require('./DefaultAction');
-var CronJob = require('cron').CronJob;
 module.exports = class Bot {
     constructor(cfg) {
         this.startChannel = cfg.startChannel;
