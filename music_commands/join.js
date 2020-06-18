@@ -13,6 +13,7 @@ const data = {
                 try {
                     player.connection = await msg
                         .member.voice.channel.join();
+                    player.chatChannel = msg.channel;
                     return msg.channel.send(`Joined voice channel **${msg.member.voice.channel.name}**`);
                 } catch (e) {
                     let log_id = await client.report('report',e.message);

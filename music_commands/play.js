@@ -15,9 +15,17 @@ const data = {
         let vid = params[1];
         try {
             if (player.connection.dispatcher) {
-                player.queue.push(vid);
+                player.queue.push({
+                    id: ytdl.getVideoID(vid),
+                    url: vid,
+                    info: await ytdl.getInfo(vid)
+                });
             } else {
-                player.current = vid;
+                player.current = {
+                    id: ytdl.getVideoID(vid),
+                    url: vid,
+                    info: await ytdl.getInfo(vid)
+                };
                 player.play();
             }
         } catch (e) {

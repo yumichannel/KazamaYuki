@@ -6,7 +6,10 @@ const data = {
     cd: 1,
     enable: true,
     run: async function(client = new Discord.Client(),msg = new Discord.Message(),params= []) {
-        msg.channel.send(msg.guild.music_player.queue.join('\n') || 'Queue empty', {code: true});
+        let queue = msg.guild.music_player.queue.map((value, index) => {
+            return index + ": "+ value.info.title;
+        })
+        msg.channel.send(queue.join('\n') || 'Queue empty', {code: true});
     }
 }
 module.exports = new Command(data)
