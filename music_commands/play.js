@@ -18,13 +18,13 @@ const data = {
                 player.queue.push({
                     id: ytdl.getVideoID(vid),
                     url: vid,
-                    info: await ytdl.getInfo(vid)
+                    info: (await ytdl.getInfo(vid)).player_response.videoDetails
                 });
             } else {
                 player.current = {
                     id: ytdl.getVideoID(vid),
                     url: vid,
-                    info: await ytdl.getInfo(vid)
+                    info: (await ytdl.getInfo(vid)).player_response.videoDetails
                 };
                 player.play();
             }

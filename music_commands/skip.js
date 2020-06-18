@@ -8,6 +8,7 @@ const data = {
     run: async function(client = new Discord.Client(),msg = new Discord.Message(),params= []) {
         var player = msg.guild.music_player;
         if (player.current) {
+            player.lastPlay = player.current;
             console.log("Skip "+player.current.info.title);
             if (params[1] === "-k" || params[1] === "--keep") {
                 player.next(false);

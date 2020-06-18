@@ -4,16 +4,19 @@ const fs = require('fs');
 module.exports = class MPlayer {
     constructor() {
         this.current = null;
+        this.lastPlay = null;
         this.queue = [];
         this.pause = false;
         this.connection = null;
         this.chatChannel = null;
         this.loop = 2;
+        this.playerStatMsgId = null;
         this.play = async () => {
             if (!this.current && this.queue.length === 0) {
                 this.connection.dispatcher.end();
                 return this.chatChannel.send('End of queue', {code: true});
             }
+            console.log(this.current.info);
             let videoID = this.current.id;
             fs.access('assets/music_cache/'+videoID+'.mp3',fs.F_OK,(err) => {
                 var src;
@@ -34,7 +37,6 @@ module.exports = class MPlayer {
             })
         }
         this.onFinish = () => {
-            console.log('End play '+this.current.id);
             this.next();
         }
         this.onError = (err) => {
