@@ -16,7 +16,6 @@ module.exports = class MPlayer {
                 this.connection.dispatcher.end();
                 return this.chatChannel.send('End of queue', {code: true});
             }
-            console.log(this.current.info);
             let videoID = this.current.id;
             fs.access('assets/music_cache/'+videoID+'.mp3',fs.F_OK,(err) => {
                 var src;

@@ -26,6 +26,7 @@
     "google-auth-library": "^4.2.5",
     "google-translate-api": "^2.3.0",
     "googleapis": "^40.0.1",
+    "jsdom": "^16.2.2",
     "node-opus": "^0.3.2",
     "node-sass": "^4.14.1",
     "password-generator": "^2.2.0",
