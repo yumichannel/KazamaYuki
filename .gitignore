@@ -11,3 +11,6 @@ image.png
 model/Database.json
 /.idea
 /models/database.json
+logs
+assets/music_cache
+package-lock.json

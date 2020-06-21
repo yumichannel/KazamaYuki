@@ -18,6 +18,7 @@ const data = {
     caller: "caro",
     cd: 0,
     help: "join, start, enjoy",
+    enable: true,
     run: function (msg = new Discord.Message, params = []) {
         let caroGame = msg.client.caroGame
         let myGame

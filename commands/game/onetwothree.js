@@ -1,8 +1,9 @@
 const Discord = require('discord.js');
 const Command = require('../../models/Command');
 const data = {
-    caller: "onetwothree",
+    caller: "rsp",
     cd: 10,
+    enable: true,
     run: function(msg=new Discord.Message,params=[]){
         const answer={
             win:[
@@ -16,12 +17,12 @@ const data = {
             ]
         }
         var uwin =()=>{
-            var embed = new Discord.RichEmbed()
+            var embed = new Discord.MessageEmbed()
             embed.setDescription(answer.win[0])
             msg.channel.send(embed)
         }
         var ulose =()=>{
-            var embed = new Discord.RichEmbed()
+            var embed = new Discord.MessageEmbed()
             embed.setDescription(answer.lose[0])
             msg.channel.send(embed);
         }
@@ -42,7 +43,7 @@ const data = {
             msg.channel.send(list[choice])
             
             if(last == list[choice]){
-                var embed = new Discord.RichEmbed()
+                var embed = new Discord.MessageEmbed()
                 embed.setDescription(answer.draw[0])
                 msg.channel.send(answer.draw[0])
             }else{

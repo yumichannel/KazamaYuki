@@ -3,6 +3,7 @@ const Command = require('../../models/Command');
 const data = {
     caller: "rng",
     cd: 1,
+    enable: true,
     run: function(msg=new Discord.Message,params=[]){
         var x = params.slice(1)
         var arr

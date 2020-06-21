@@ -3,9 +3,10 @@ const Command = require('../../models/Command');
 const data = {
     caller: "eval",
     cd: 0,
+    enable: true,
     run: function(message=new Discord.Message,params=[]){
         let text = message.content.substring(params[0].length+2);
-        let embed = new Discord.RichEmbed;
+        let embed = new Discord.MessageEmbed;
         try {
             let ev = eval(text)
             if(typeof ev !== 'string'){
