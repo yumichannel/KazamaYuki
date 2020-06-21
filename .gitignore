@@ -13,3 +13,4 @@ model/Database.json
 /models/database.json
 logs
 assets/music_cache
+package-lock.json
