@@ -22,7 +22,7 @@ module.exports = class MPlayer {
                 if (err) {
                     console.log('caching '+videoID);
                     src = ytdl(this.current.url)
-                    src.pipe(fs.createWriteStream('assets/music_cache/'+videoID+'.mp3'));
+                    // src.pipe(fs.createWriteStream('assets/music_cache/'+videoID+'.mp3'));
                 } else {
                     src = 'assets/music_cache/'+videoID+'.mp3';
                     console.log('play '+videoID+' from cache');
