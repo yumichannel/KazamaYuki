@@ -51,8 +51,7 @@ const data = {
                 let videoSelectorReactor = msgVideoSelector.createReactionCollector(filter)
                 videoSelectorReactor.on('collect', async (reaction,user) => {
                     if (reaction.emoji.name === '🔴') {
-                        console.log('stop');
-                        videoSelectorReactor.stop();
+                        console.log('stop selector');
                     } else {
                         let index = usedEmoji.indexOf(reaction.emoji.name);
                         const vid = 'https://www.youtube.com/watch?v=' + result_ids[index];
@@ -70,9 +69,9 @@ const data = {
                                 info: (await ytdl.getInfo(vid)).player_response.videoDetails
                             };
                             player.play();
-                            videoSelectorReactor.stop();
                         }
                     }
+                    videoSelectorReactor.stop();
                 });
                 videoSelectorReactor.on('end', function () {
                     msgVideoSelector.delete();
