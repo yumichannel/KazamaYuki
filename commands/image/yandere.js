@@ -6,7 +6,7 @@ const data = {
     cd: 1,
     nsfw: true,
     enable: true,
-    run: async function (msg, params) {
+    run: async function (bot, msg, params) {
         const src = "https://yande.re/";
         var em = new Discord.MessageEmbed();
         switch (params[1]) {

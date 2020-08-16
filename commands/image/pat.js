@@ -5,7 +5,7 @@ const data = {
     cd: 5,
     enable: true,
     translate: require('../../models/lang/pat.json'),
-    run: async function (msg, params) {
+    run: async function (bot, msg, params) {
         const lang = msg.client.data.get(msg.guild.id).lang;
         const list = [
             "https://i.imgur.com/JHdnsWA.gif",

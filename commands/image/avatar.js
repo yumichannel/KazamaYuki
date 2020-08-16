@@ -9,7 +9,7 @@ const data = {
         ["avatar @user","Get server user avatar"]
     ],
     enable: true,
-    run: async function (msg, params) {
+    run: async function (bot, msg, params) {
         const mention = msg.mentions.members;
         let url = "";
         if (mention.size === 0) {
