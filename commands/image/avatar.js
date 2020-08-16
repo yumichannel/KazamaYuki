@@ -3,6 +3,11 @@ const Command = require('../../models/Command');
 const data = {
     caller: "avatar",
     cd: 10,
+    description: "Get your avatar or tagged user",
+    help: [
+        ["avatar","Get your avatar"],
+        ["avatar @user","Get server user avatar"]
+    ],
     enable: true,
     run: async function (msg, params) {
         const mention = msg.mentions.members;
@@ -22,7 +27,7 @@ const data = {
             embed: {
                 image: {
                     url: url,
-                    width: 250
+                    width: 256
                 }
             }
         })
