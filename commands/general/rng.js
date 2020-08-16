@@ -4,7 +4,7 @@ const data = {
     caller: "rng",
     cd: 1,
     enable: true,
-    run: function(msg=new Discord.Message,params=[]){
+    run: function (bot = new Bot({}),msg=new Discord.Message,params=[]){
         var x = params.slice(1)
         var arr
         var res =''

@@ -5,7 +5,7 @@ const data = {
     caller: "prefix",
     cd: 10,
     enable: true,
-    run: function(msg=new Discord.Message,params=[]){
+    run: function (bot = new Bot({}),msg=new Discord.Message,params=[]){
         var prefix = params[1]
         msg.client.data.get(msg.guild.id).setPrefix(prefix)
         msg.client.update_data()

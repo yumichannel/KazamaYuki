@@ -4,7 +4,7 @@ const data = {
     caller: "countdown",
     cd: 10,
     enable: false,
-    run: function(msg=new Discord.Message,params=[]){
+    run: function (bot = new Bot({}),msg=new Discord.Message,params=[]){
         var guild = msg.member.guild;
         if (!guild) return console.log(1);
         var channel = guild.channels.get(params[1])

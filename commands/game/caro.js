@@ -19,7 +19,7 @@ const data = {
     cd: 0,
     help: "join, start, enjoy",
     enable: true,
-    run: function (msg = new Discord.Message, params = []) {
+    run: function (bot = new Bot({}),msg = new Discord.Message, params = []) {
         let caroGame = msg.client.caroGame
         let myGame
         let size = 8

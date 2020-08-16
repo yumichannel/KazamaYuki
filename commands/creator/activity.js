@@ -4,7 +4,7 @@ const data = {
     caller: "activity",
     cd: 1,
     enable: true,
-    run: function(msg=new Discord.Message,params=[]){
+    run: function (bot = new Bot({}),msg=new Discord.Message,params=[]){
         const act=["Playing","Watching","Listening","Streaming"];
         const actEmoji=["0⃣","1⃣","2⃣","3⃣"];
         let opt_str =""

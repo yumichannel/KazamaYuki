@@ -4,7 +4,7 @@ const data = {
     caller: "emit",
     cd: 10,
     enable: true,
-    run: function(msg=new Discord.Message,params=[]){
+    run: function (bot = new Bot({}),msg=new Discord.Message,params=[]){
         
     }
 }

@@ -5,7 +5,7 @@ const data = {
     caller: "greeting",
     cd: 1,
     enable: true,
-    run: function(msg=new Discord.Message,params=[]){
+    run: function (bot = new Bot({}),msg=new Discord.Message,params=[]){
         const lang = msg.client.data.get(msg.guild.id).lang
         // option available: "-a" "-d" "-c" "-l"
 

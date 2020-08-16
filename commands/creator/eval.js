@@ -4,7 +4,7 @@ const data = {
     caller: "eval",
     cd: 0,
     enable: true,
-    run: function(message=new Discord.Message,params=[]){
+    run: function (bot = new Bot({}),message=new Discord.Message,params=[]){
         let text = message.content.substring(params[0].length+2);
         let embed = new Discord.MessageEmbed;
         try {
