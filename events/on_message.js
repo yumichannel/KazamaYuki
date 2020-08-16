@@ -22,13 +22,22 @@ module.exports = async function onMessage(bot = new Bot(), message = new Discord
         return await channel.send(errorMsg[Math.floor(Math.random() * errorMsg.length)] || "Em không làm đâu :<")
     } else {
         const command = bot.client.commands.get(caller);
+
+        // Check command help
         const helpReg = new RegExp(`^[${prefix}${bot.prefix}]${caller}\\s{1}help$`);
         if (content.match(helpReg)) {
             let em = new Discord.MessageEmbed();
             let num = Math.floor(Math.random() * 256);
             em.setColor([num, num, num]);
-            em.setTitle(`How to use \`${caller}\``);
-            em.setDescription(command.help);
+            // em.setTitle(`Command \`${caller}\``);
+            let description = command.description;
+            for (let i = 0; i < command.help.length; i++) {
+                if (i === 0) {
+                    description += "\n--------------------";
+                }
+                description += `\n\`${command.help[i][0]}\` ${command.help[i][1]}`;
+            }
+            em.setDescription(description);
             return await channel.send(em);
         }
 
