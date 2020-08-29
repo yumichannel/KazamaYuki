@@ -2,7 +2,6 @@ const Discord = require('discord.js');
 const Command = require('../../models/Command');
 const Bot = require('../../models/Bot');
 const PixivAppApi = require("pixiv-app-api");
-const pixivImg = require("pixiv-img");
 const pixiv = new PixivAppApi(process.env.PIXIV_EMAIL, process.env.PIXIV_PASSWORD, {
     camelcaseKeys: true,
 })
@@ -34,6 +33,8 @@ const data = {
                         let json = await pixiv.next();
                         if (json && json.illusts) {
                             illusts = illusts.concat(json.illusts);
+                        } else {
+                            break;
                         }
                     };
                 }
@@ -42,18 +43,13 @@ const data = {
                     let most_popular = await new Promise(res => {
                         let mostPopular = [];
                         let maxView = 0;
-                        let index = 0;
                         for (let i = 0; i < illusts.length; i++) {
-                            if (illusts[i].totalView > maxView) {
+                            if (illusts[i].totalView >= maxView) {
                                 maxView = illusts[i].totalView;
-                                index = i;
-                                mostPopular = [];
                                 mostPopular.push(illusts[i]);
-                            } else if (illusts[i].totalView === maxView) {
-                                mostPopular.push(illusts[i]);
-                                if (mostPopular.length > 5) {
-                                    mostPopular.shift();
-                                }
+                            }
+                            if (mostPopular.length > 20) {
+                                mostPopular.shift();
                             }
                         }
                         res(mostPopular);
