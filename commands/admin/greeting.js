@@ -3,6 +3,13 @@ const Command = require('../../models/Command');
 const tranlater = require('../../models/config').translate.greeting_warn
 const data = {
     caller: "greeting",
+    description: "Welcome new member with customizable words",
+    help: [
+        ["greeting -a xyz @user","Add custom greeting message \"xyz @user\", place @user for mention new member."],
+        ["greeting -l","Listing all custom message marked with position number."],
+        ["greeting -d 0","Delete message has position 0 as seen in listing, replace 0 with **all** for deleting all."],
+        ["greeting -c general","Set channel for sending greeting message, default **general**"]
+    ],
     cd: 1,
     enable: true,
     run: function (bot = new Bot({}),msg=new Discord.Message,params=[]){
@@ -43,6 +50,7 @@ const data = {
                     temp_list += `[${counter}] ${message}\n`;
                     counter++;
                 })
+                if (!temp_list) temp_list += "Empty";
                 msg.channel.send(temp_list,{code:"scss"})
                 break;
             default:
@@ -90,7 +98,7 @@ const data = {
         }
         function setChannel(channel){
             return new Promise((resolve,reject)=>{
-                var found = msg.guild.channels.find("name",channel)
+                var found = msg.guild.channels.cache.find(c=>c.name == channel);
                 if(found){
                     if(found.type=="text"){
                         msg.client.data.get(msg.guild.id).welcomeChannel = channel
