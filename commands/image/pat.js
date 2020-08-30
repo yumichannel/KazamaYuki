@@ -2,6 +2,11 @@ const Discord = require('discord.js');
 const Command = require('../../models/Command');
 const data = {
     caller: "pat",
+    description: "Pat someone or pat urself",
+    help: [
+        ["pat","(╯°□°）╯︵ ┻━┻ Oops, spoiler!"],
+        ["pat @someone","(╯°□°）╯︵ ┻━┻ Oops, spoiler!"]
+    ],
     cd: 5,
     enable: true,
     translate: require('../../models/lang/pat.json'),

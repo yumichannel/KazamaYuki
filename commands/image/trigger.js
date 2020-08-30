@@ -7,7 +7,7 @@ const data = {
     caller: "trigger",
     cd: 10,
     enable: true,
-    run: async function (message, params) {
+    run: async function (bot,message, params) {
         let args = params[1];
         if (message.mentions.members.size === 0) {
             var {body: buffer} = await snekfetch.get(message.author.avatarURL({

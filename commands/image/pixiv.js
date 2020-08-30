@@ -11,7 +11,7 @@ const data = {
     cd: 5,
     description: "Interact with Pixiv",
     nsfw: false,
-    help: "",
+    help: [],
     enable: true,
     run: async function (bot = new Bot({}), msg = new Discord.Message, params = []) {
         if (!params[1]) return;

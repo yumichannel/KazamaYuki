@@ -5,8 +5,12 @@ const Canvas = require('canvas');
 const data = {
     caller: "slap",
     cd: 10,
+    description: "Slap someone ... at least",
+    help: [
+        ["slap",""]
+    ],
     enable: true,
-    run: async function (msg, param) {
+    run: async function (bot, msg, param) {
         let text = "";
         const {body: buffer1} = await snek.get(msg.author.avatarURL({
             size: 256,

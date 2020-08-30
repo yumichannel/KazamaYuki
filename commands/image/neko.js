@@ -4,6 +4,11 @@ const snekfetch = require('snekfetch');
 require('../../models/Bot');
 const data = {
     caller: "neko",
+    description: "Send random neko picture from https://nekos.life/",
+    help: [
+        ["neko","Normal mode"],
+        ["neko lewd","Lewd mode, only works in NSFW channel"],
+    ],
     cd: 1,
     enable: true,
     run: async function (bot, msg, params) {

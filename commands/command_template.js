@@ -6,7 +6,7 @@ const data = {
     cd: 10,
     description: "",
     nsfw: false,
-    help: "",
+    help: [],
     enable: false,
     run: function (bot = new Bot({}),msg=new Discord.Message,params=[]){
         
