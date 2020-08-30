@@ -3,6 +3,12 @@ const Command = require('../../models/Command');
 const snek = require("snekfetch");
 const data = {
     caller: "yan",
+    description: "Get image on yande.re",
+    help: [
+        ["yan","Random..."],
+        ["yan daily","Get random daily picture. variants: `weekly` `monthly` `yearly` ``"],
+        ["yan urkeyword","search by keyword"],
+    ],
     cd: 1,
     nsfw: true,
     enable: true,
