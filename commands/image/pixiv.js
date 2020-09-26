@@ -12,7 +12,7 @@ const data = {
     description: "Interact with Pixiv",
     nsfw: false,
     help: [],
-    enable: true,
+    enable: false,
     run: async function (bot = new Bot({}), msg = new Discord.Message, params = []) {
         if (!params[1]) return;
         switch (params[1]) {

@@ -10,7 +10,8 @@ module.exports = {
         'bot',
         'game',
         'admin',
-        'creator'
+        'creator',
+        'wiki'
     ],
     language:[
         "en",
@@ -23,7 +24,7 @@ module.exports = {
         },
         owner_warn:{
             en: "Warning! This command requires CREATOR permission",
-            vi: "Em chỉ làm điều đó với Yui-nii thôi (> w <\")"
+            vi: "Em chỉ làm điều đó với Yui-nii thôi "
         },
         prefix_warn:{
             en: "Server prefix changed to `@prefix`",
