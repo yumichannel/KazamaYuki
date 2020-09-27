@@ -2,95 +2,129 @@ const Discord = require('discord.js');
 const fs = require('fs');
 const load_cmd = require('../utils/load_command.js');
 const load_data = require('../utils/load_data.js');
+const load_member_data = require('../utils/load_member_data.js');
 const translator = require('./config').translate;
-const read_data = require('../utils/read_data');
 const snek = require('snekfetch');
 const defaultAction = require('./DefaultAction');
 const event_on_message = require('../events/on_message');
+const mysql = require('mysql');
+const Adventure = require("./Adventure");
 module.exports = class Bot {
     constructor(cfg) {
         this.prefix = cfg.prefix;
         this.startChannel = cfg.startChannel;
         this.ready = false;
-        this.sleep = false;
-        this.aliases = new Object();
+        this.cd = new Discord.Collection();
         this.conn = null;
+        this.aliases = new Object();
+        this.data = new Discord.Collection();
+        this.members = new Discord.Collection();
+        this.members_update = false;
+        this.adventure_data_sync = null;
         this.client = new Discord.Client();
         this.commands = new Discord.Collection();
         this.client.caroGame = new Discord.Collection();
-        this.client.data = new Discord.Collection();
-        this.cd = new Discord.Collection();
-        this.client.jobList = new Discord.Collection();
+        this.execsql = (sql = "") => {
+            return new Promise((resolve)=>{
+                this.conn.query(sql,(err,res)=>{
+                    if (err) resolve(err);
+                    resolve(res);
+                });
+            })
+        };
         this.client.lewd_warning = msg => {
             msg.channel.send(new Discord.MessageEmbed()
                 .setTitle("NSFW")
                 .setImage('https://media1.tenor.com/images/b1b3e852ed8be4622f9812550beb8d88/tenor.gif'))};
-        this.client.update_data = function () {
-            fs.writeFile("models/database.json",
-                JSON.stringify(this.data.array()),
-                {encoding: "utf8"}, (err) => {
-                if (err) {
-                    console.log(err);
-                }
-            })
-        };
         this.client
             .once('ready', async () => {
                 try {
                     await this.client.user.setActivity("loading to 99%", {
                         type: "WATCHING"
                     });
-                    this.client.commands = await load_cmd(cfg.cmdType);
+                    let loader = await load_cmd(cfg.cmdType);
+                    this.aliases = loader[0];
+                    this.commands = loader[1];
+                    if (cfg.database.mysql) {
+                        this.conn = mysql.createConnection({
+                            host: process.env.MYSQL_HOST || 'localhost',
+                            port: process.env.MYSQL_PORT || 3306,
+                            database: process.env.MYSQL_DB,
+                            user: process.env.MYSQL_USERNAME || 'root',
+                            password: process.env.MYSQL_PASSWORD || ''
+                        });
+                    }
                     let guildIdList = this.client.guilds.cache.map(g => g.id);
-                    this.client.data = await load_data(guildIdList);
+                    this.data = await load_data(guildIdList, this.conn);
+                    this.members = await load_member_data(this.conn);
                     this.ready = true;
-                    console.log(`Loaded custom data of ${this.client.data.size} guild`);
-
-                    if (this.startChannel) {
-                        let _startChannel = await this.client.channels.cache.get(this.startChannel);
-                        await _startChannel.send('onee-chan, onii-chan, Sagiri đã online rồi đây!',{
-                            embed: {
-                                image: {
-                                    url: 'https://i.imgur.com/VRXDYp2.gif'
+                    this.adventure_data_sync = setInterval(
+                        (function(self) {
+                            return function() {
+                                if (self.members_update) {
+                                    for (const [user_id,mem] of self.members) {
+                                        console.log(`${Date.now()}: Sync data up to database`);
+                                        if (mem.process.sync) {
+                                            self.execsql(`
+                                                update member_info
+                                                set name = "${mem.name}",
+                                                    sex = ${mem.sex},
+                                                    race = ${mem.race},
+                                                    level = ${mem.level},
+                                                    exp = ${mem.exp},
+                                                    balance = ${mem.balance}
+                                                where user_id = "${mem.user_id}"
+                                            `);
+                                            mem.process.sync = false;
+                                            self.members.set(user_id, mem);
+                                        }
+                                    }
                                 }
                             }
-                        })
-                    }
+                        })(this),
+                        cfg.refresh_timeloop
+                    );
+                    console.log(`Loaded custom data of ${this.data.size} guilds`);
                 } catch (e) {
                     console.log(e);
                 }
             })
             .on('guildCreate', async (g) => {
-                let data = await read_data();
-                let new_data = {
-                    guild_id: g.id,
-                    welcomeMsg: [],
-                    welcomeChannel: [
-                        "general"
-                    ],
-                    errorMsg: [
-                        "Unfortunely,It's error"
-                    ],
-                    prefix: "!",
-                    lang: "en"
-                };
-                data.push(new_data);
-                this.client.data.set(g.id, new_data)
             })
             .on('guildDelete', (g) => {
-                this.client.data.delete(g.id);
-                this.client.update_data();
             })
             .on('guildMemberAdd', async (member) => {
-                let channel = member.guild.channels.find(c => {
-                    return c.name === this.client.data.get(member.guild.id).welcomeChannel;
-                });
-                if (channel === undefined) return;
-                let wlist = this.client.data.get(member.guild.id).welcomeMsg;
-                let ran = Math.floor(Math.random() * wlist.length);
-                channel.send(wlist[ran].replace("@user", `${member}`));
+                // let wc_channel = this.client.data.get(member.guild.id).wc_channel;
+                // if (wc_channel) {
+                //     let channel = member.guild.channels.find(c => c.id == wc_channel);
+                // }
+                // if (channel === undefined) return;
+                // let wlist = this.client.data.get(member.guild.id).welcomeMsg;
+                // let ran = Math.floor(Math.random() * wlist.length);
+                // channel.send(wlist[ran].replace("@user", `${member}`));
             })
-            .on('message', message => event_on_message(this, message));
+            .on('message', message => event_on_message(this, message))
+            .on('member_chat', (user_id, channel)=>{
+                let member = this.members.get(user_id);
+                member.exp += 6;
+                member.process.sync = true;
+                console.log(`${Date.now()}: ${member.name} gain 6xp from chat`)
+                if (member.exp >= member.exp_max && !member.process.levelup) {
+                    member.process.levelup = true;
+                    this.members.set(user_id, member);
+                    this.client.emit("member_level_up", member, channel);
+                } else {
+                    this.members.set(user_id, member);
+                }
+                this.members_update = true;
+            })
+            .on("member_level_up", async (member, channel) => {
+                member.process.levelup = false;
+                member = Adventure.calculateXP(member);
+                this.members.set(member.user_id, member);
+                await channel.send(`Level up! <@${member.user_id}> reached level ${member.level}`);
+                console.log(`${Date.now()}: ${member.name} is now level ${member.level}`);
+            })
         this.client.login(cfg.token).then(r => console.log('Logged in'));
     }
 };

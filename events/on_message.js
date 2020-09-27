@@ -6,23 +6,21 @@ module.exports = async function onMessage(bot = new Bot(), message = new Discord
     const guild = message.guild;
     const channel = message.channel;
     const content = message.content;
-    const prefix = bot.client.data.get(guild.id).prefix || bot.prefix;
+    const prefix = bot.data.get(guild.id).prefix || bot.prefix;
     if (message.author.bot) return;
+    if (bot.members.has(message.author.id)) bot.client.emit("member_chat", message.author.id, message.channel);
     if (!message.content.startsWith(prefix)) return;
     let params = message.content.substring(prefix.length).split(" ");
     let caller = params[0];
 
     // Is that command exist?
-    if (caller === "help") {
-        return await message.member.send(require('../utils/getHelpList')(bot.client.commands));
-    }
+    if (caller === "help") return await message.member.send(require('../utils/getHelpList')(bot.commands));
 
-    if (!bot.client.commands.has(caller)) {
+    if (!bot.commands.has(caller)) {
         const errorMsg = bot.client.data.get(guild.id).errorMsg;
-        return await channel.send(errorMsg[Math.floor(Math.random() * errorMsg.length)] || "Em không làm đâu :<")
+        return await channel.send(errorMsg[Math.floor(Math.random() * errorMsg.length)] || "Not an illegal command.")
     } else {
-        const command = bot.client.commands.get(caller);
-
+        const command = bot.commands.get(caller);
         // Check command help
         const helpReg = new RegExp(`^[${prefix}${bot.prefix}]${caller}\\s{1}help$`);
         if (content.match(helpReg)) {
@@ -73,7 +71,7 @@ module.exports = async function onMessage(bot = new Bot(), message = new Discord
 
         // Try to execute command
         try {
-            bot.client.commands.get(caller).run(bot, message, params)
+            bot.commands.get(caller).run(bot, message, params)
         } catch (error) {
             console.log(error);
         }

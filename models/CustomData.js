@@ -2,9 +2,9 @@ const config = require('./config')
 module.exports = class CustomData{
     constructor(data){
         this.guild_id=data.guild_id
-        this.welcomeMsg=data.welcomeMsg || []
-        this.welcomeChannel = data.welcomeChannel || "general"
-        this.errorMsg=data.errorMsg || []
+        this.wc_msg=data.wc_msg || []
+        this.wc_channel = data.wc_channel || null
+        this.err_msg=data.err_msg || []
         this.prefix=data.prefix || config.prefix
         this.lang=data.lang || "en"
     }

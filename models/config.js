@@ -5,13 +5,14 @@ module.exports = {
     ytapikey: process.env.ytapikey,
     test:"test?",
     cmdType:[
-        'general',
-        'image',
-        'bot',
-        'game',
-        'admin',
-        'creator',
-        'wiki'
+        // 'general',
+        // 'image',
+        // 'bot',
+        // 'game',
+        // 'admin',
+        // 'creator',
+        // 'wiki',
+        'adventure'
     ],
     language:[
         "en",
@@ -66,5 +67,9 @@ module.exports = {
                 vi:""
             }
         }
-    }
+    },
+    database: {
+        mysql: 1
+    },
+    refresh_timeloop: 6000
 };
