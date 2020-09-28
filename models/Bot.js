@@ -11,18 +11,25 @@ const mysql = require('mysql');
 const Adventure = require("./Adventure");
 module.exports = class Bot {
     constructor(cfg) {
+        this.client = new Discord.Client();
+
         this.prefix = cfg.prefix;
         this.startChannel = cfg.startChannel;
         this.ready = false;
-        this.cd = new Discord.Collection();
         this.conn = null;
-        this.aliases = new Object();
         this.data = new Discord.Collection();
         this.members = new Discord.Collection();
         this.members_update = false;
         this.adventure_data_sync = null;
-        this.client = new Discord.Client();
+        this.adventure_const = {
+            attendance_timeout: 30000,
+            attendance_gold: 200
+        };
+
+        this.aliases = new Object();
         this.commands = new Discord.Collection();
+        this.cd = new Discord.Collection();
+
         this.client.caroGame = new Discord.Collection();
         this.execsql = (sql = "") => {
             return new Promise((resolve)=>{
@@ -107,6 +114,7 @@ module.exports = class Bot {
             .on('member_chat', (user_id, channel)=>{
                 let member = this.members.get(user_id);
                 member.exp += 6;
+                member.balance++;
                 member.process.sync = true;
                 console.log(`${Date.now()}: ${member.name} gain 6xp from chat`)
                 if (member.exp >= member.exp_max && !member.process.levelup) {

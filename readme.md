@@ -12,4 +12,9 @@
 ### 3. Mạo hiểm giả:
 - Khi thành viên đạt level 5 có thể đăng ký làm mạo hiểm giả
 - Thêm thông tin về hệ ma pháp (Hỏa, Thủy, Phong, Thổ, Thánh, Hắc)
-- Rank
+
+### 4. Kiếm gold (G)
+- chat: 1G / message
+- điểm danh: 200G / ngày (memdaily)
+- nhặt tiền: tiền rớt ngẫu nhiên (5000~10000G) random ngẫu nhiên trên world (gpick); //chắc bỏ
+- diệt boss: hệ số tùy vào boss

@@ -13,8 +13,8 @@ const data = {
     run: async function (bot = new Bot({}), msg = new Discord.Message, params = []) {
         const sexs = ["shounen ♂ ", "shoujo ♀ ", "futanari ⚤ "];
         const races = await bot.execsql("select * from adv_race");
-        const dummy_field = { name: '\u200B', value: '\u200B' };
-        const dummy_field_inline = { name: '\u200B', value: '\u200B', inline: true };
+        const dummy_field = { name: '\u200b', value: '\u200b' };
+        const dummy_field_inline = { name: '\u200b', value: '\u200b', inline: true };
         if (bot.members.has(msg.author.id)) {
             let member = bot.members.get(msg.author.id);
             let em = new Discord.MessageEmbed;
