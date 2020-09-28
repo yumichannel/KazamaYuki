@@ -54,7 +54,8 @@ const data = {
                         value: `${member.exp} / ${member.exp_max} [${(member.exp * 100 / member.exp_max).toFixed(2)} %]`,
                         inline: true
                     }, dummy_field_inline
-                ]);
+                ])
+                .addField("Balance",`${member.balance} (G)`);
             msg.channel.send(em);
         }
     }
