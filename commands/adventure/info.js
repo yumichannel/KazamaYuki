@@ -3,7 +3,7 @@ const Command = require('../../models/Command');
 const Bot = require('../../models/Bot');
 const Adventure = require('../../models/Adventure');
 const data = {
-    caller: "meminfo",
+    caller: "stat",
     cd: 10,
     description: "Check member info",
     nsfw: false,

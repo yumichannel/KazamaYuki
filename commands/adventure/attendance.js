@@ -3,13 +3,13 @@ const Command = require('../../models/Command');
 const Bot = require('../../models/Bot');
 const Adventure = require('../../models/Adventure');
 const data = {
-    caller: "dailycheck",
+    caller: "daily",
     cd: 10,
     description: "Check member info",
     nsfw: false,
     help: [],
     enable: true,
-    alias: ['dlck'],
+    alias: [],
     run: async function (bot = new Bot({}), msg = new Discord.Message, params = []) {
         if (bot.members.has(msg.author.id)) {
             let mem = bot.members.get(msg.author.id);

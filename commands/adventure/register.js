@@ -3,13 +3,13 @@ const Command = require('../../models/Command');
 const Bot = require('../../models/Bot');
 const Member = require('../../models/Adventure').Member;
 const data = {
-    caller: "register",
+    caller: "join",
     cd: 10,
     description: "Register as member of Yuki Hazama",
     nsfw: false,
     help: [],
     enable: true,
-    alias: ['reg'],
+    alias: [],
     run: async function (bot = new Bot({}), msg = new Discord.Message, params = []) {
         if (bot.members.has(msg.author.id)) return console.log(`${msg.author.username} already has an account.`);
         const sexs = ["shounen", "shoujo", "futanari"];
