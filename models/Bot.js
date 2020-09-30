@@ -9,6 +9,7 @@ const defaultAction = require('./DefaultAction');
 const event_on_message = require('../events/on_message');
 const mysql = require('mysql');
 const Adventure = require("./Adventure");
+const gold_drop_rate = [0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 1000, 1000, 10000];
 module.exports = class Bot {
     constructor(cfg) {
         this.client = new Discord.Client();
@@ -25,6 +26,15 @@ module.exports = class Bot {
             attendance_timeout: 30000,
             attendance_gold: 200
         };
+        this.world_data = {
+            gold_drop: {
+                notice_at: null,
+                noticed: false,
+                drop_at: null,
+                dropped: false,
+                amount: 0
+            }
+        }
 
         this.aliases = new Object();
         this.commands = new Discord.Collection();
@@ -32,8 +42,8 @@ module.exports = class Bot {
 
         this.client.caroGame = new Discord.Collection();
         this.execsql = (sql = "") => {
-            return new Promise((resolve)=>{
-                this.conn.query(sql,(err,res)=>{
+            return new Promise((resolve) => {
+                this.conn.query(sql, (err, res) => {
                     if (err) resolve(err);
                     resolve(res);
                 });
@@ -42,7 +52,8 @@ module.exports = class Bot {
         this.client.lewd_warning = msg => {
             msg.channel.send(new Discord.MessageEmbed()
                 .setTitle("NSFW")
-                .setImage('https://media1.tenor.com/images/b1b3e852ed8be4622f9812550beb8d88/tenor.gif'))};
+                .setImage('https://media1.tenor.com/images/b1b3e852ed8be4622f9812550beb8d88/tenor.gif'))
+        };
         this.client
             .once('ready', async () => {
                 try {
@@ -66,11 +77,12 @@ module.exports = class Bot {
                     this.members = await load_member_data(this.conn);
                     this.ready = true;
                     this.adventure_data_sync = setInterval(
-                        (function(self) {
-                            return function() {
+                        (function (self) {
+                            return function () {
+                                let now = Date.now();
                                 if (self.members_update) {
-                                    for (const [user_id,mem] of self.members) {
-                                        console.log(`${Date.now()}: Sync data up to database`);
+                                    console.log(`${Date.now()}: Sync data up to database`);
+                                    for (const [user_id, mem] of self.members) {
                                         if (mem.process.sync) {
                                             self.execsql(`
                                                 update member_info
@@ -84,6 +96,27 @@ module.exports = class Bot {
                                             `);
                                             mem.process.sync = false;
                                             self.members.set(user_id, mem);
+                                        }
+                                    }
+                                    self.members_update = false;
+                                }
+
+                                //Loop check gold_drop_event
+                                if (self.world_data.gold_drop.dropped) {
+
+                                } else {
+                                    if (!self.world_data.gold_drop.notice_at) {
+                                        self.world_data.gold_drop.notice_at = now + 10000;
+                                        self.world_data.gold_drop.drop_at = now + 20000;
+                                    } else {
+                                        if (self.world_data.gold_drop.notice_at <= now) {
+                                            if (!self.world_data.gold_drop.noticed) {
+                                                self.client.emit("gold_drop_event_notice");
+                                            } else {
+                                                if (self.world_data.gold_drop.drop_at <= now) {
+                                                    self.client.emit("gold_drop_event_drop");
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -111,7 +144,7 @@ module.exports = class Bot {
                 // channel.send(wlist[ran].replace("@user", `${member}`));
             })
             .on('message', message => event_on_message(this, message))
-            .on('member_chat', (user_id, channel)=>{
+            .on('member_chat', (user_id, channel) => {
                 let member = this.members.get(user_id);
                 member.exp += 6;
                 member.balance++;
@@ -133,6 +166,47 @@ module.exports = class Bot {
                 await channel.send(`Level up! <@${member.user_id}> reached level ${member.level}`);
                 console.log(`${Date.now()}: ${member.name} is now level ${member.level}`);
             })
+            .on("gold_drop_event_notice", async () => {
+                let guilds = this.client.guilds.cache;
+                for (const [gid, g] of guilds) {
+                    let noti_ch = g.channels.cache.find(c => c.name == "tester-tester");
+                    if (noti_ch) {
+                        noti_ch.send(`>>> Something is coming in <#${noti_ch.id}>`);
+                    }
+                }
+                this.world_data.gold_drop.noticed = true;
+            })
+            .on("gold_drop_event_drop", async () => {
+                let guilds = this.client.guilds.cache;
+                let code = Math.floor(Math.random()*10)+""+
+                            Math.floor(Math.random()*10)+""+
+                            Math.floor(Math.random()*10)+""+
+                            Math.floor(Math.random()*10)+""+
+                            Math.floor(Math.random()*10)
+                for (const [gid, g] of guilds) {
+                    let noti_ch = g.channels.cache.find(c => c.name == "tester-tester");
+                    if (noti_ch) {
+                        let amount = gold_drop_rate[Math.floor(Math.random() * gold_drop_rate.length)];
+                        let notice = await noti_ch.send(`>>> *A Chest appears. There is a note on the chest, It says ${code}*.`);
+                        noti_ch.awaitMessages(m => {
+                            if (m.content == code && this.members.has(m.author.id)) {
+                                let mem = this.members.get(m.author.id)
+                                mem.balance += amount;
+                                mem.process.sync = true;
+                                this.members_update = true;
+                                m.channel.send(`>>> ${mem.getName()} gains ${amount}G from the chest.`)
+                                return true;
+                            }
+                            return false;
+                        },{max: 1, time: 20000, errors: ['time']})
+                            .catch(collected => {
+                                notice.delete();
+                                noti_ch.send(">>> *Chest disappeared!*");
+                            });;
+                    }
+                }
+                this.world_data.gold_drop.dropped = true;
+            });
         this.client.login(cfg.token).then(r => console.log('Logged in'));
     }
 };
