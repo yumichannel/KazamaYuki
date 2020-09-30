@@ -10,7 +10,7 @@ module.exports = {
         // 'bot',
         // 'game',
         // 'admin',
-        // 'creator',
+        'creator',
         // 'wiki',
         'adventure'
     ],
