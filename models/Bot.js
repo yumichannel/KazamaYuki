@@ -31,7 +31,7 @@ module.exports = class Bot {
                 notice_at: null,
                 noticed: false,
                 drop_at: null,
-                dropped: false,
+                dropped: true,
                 amount: 0
             }
         }
@@ -171,7 +171,7 @@ module.exports = class Bot {
                 for (const [gid, g] of guilds) {
                     let noti_ch = g.channels.cache.find(c => c.name == "tester-tester");
                     if (noti_ch) {
-                        noti_ch.send(`>>> Something is coming in <#${noti_ch.id}>`);
+                        noti_ch.send(`> Something is coming in <#${noti_ch.id}>`);
                     }
                 }
                 this.world_data.gold_drop.noticed = true;
@@ -184,24 +184,25 @@ module.exports = class Bot {
                             Math.floor(Math.random()*10)+""+
                             Math.floor(Math.random()*10)
                 for (const [gid, g] of guilds) {
-                    let noti_ch = g.channels.cache.find(c => c.name == "tester-tester");
-                    if (noti_ch) {
+                    let _g = this.data.get(gid);
+                    let noti_ch = null;
+                    if (_g && (noti_ch = g.channels.cache.find(c => c.id == _g.adv_notif_channel))) {
                         let amount = gold_drop_rate[Math.floor(Math.random() * gold_drop_rate.length)];
-                        let notice = await noti_ch.send(`>>> *A Chest appears. There is a note on the chest, It says ${code}*.`);
+                        let notice = await noti_ch.send(`> *A Chest appears. There is a note on the chest, It says ${code}*.`);
                         noti_ch.awaitMessages(m => {
                             if (m.content == code && this.members.has(m.author.id)) {
                                 let mem = this.members.get(m.author.id)
                                 mem.balance += amount;
                                 mem.process.sync = true;
                                 this.members_update = true;
-                                m.channel.send(`>>> ${mem.getName()} gains ${amount}G from the chest.`)
+                                m.channel.send(`> *${mem.getName()} gains ${amount}G from the chest.*`)
                                 return true;
                             }
                             return false;
                         },{max: 1, time: 20000, errors: ['time']})
                             .catch(collected => {
                                 notice.delete();
-                                noti_ch.send(">>> *Chest disappeared!*");
+                                noti_ch.send("> *Chest disappeared!*");
                             });;
                     }
                 }
