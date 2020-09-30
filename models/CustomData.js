@@ -7,6 +7,7 @@ module.exports = class CustomData{
         this.err_msg=data.err_msg || []
         this.prefix=data.prefix || config.prefix
         this.lang=data.lang || "en"
+        this.adv_notif_channel = data.adv_notif_channel || null;
     }
     /** @param {String[]} welcomeMsg set Greeting Message Handle*/
     setWelcome(welcomeMsg){
