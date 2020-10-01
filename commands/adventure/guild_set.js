@@ -16,7 +16,7 @@ const data = {
         let guild = bot.data.get(msg.guild.id);
         if (!guild) return;
         switch(params[1]) {
-            case "notify": 
+            case "notify": {
                 guild.adv_notif_channel = msg.channel.id;
                 let result = await bot.execsql(`
                     update guild_custom_data
@@ -24,9 +24,22 @@ const data = {
                     where guild_id = "${guild.guild_id}"
                 `);
                 if (result && result.affectedRows) {
-                    msg.channel.send(`> *Set ${msg.channel} as Guild Notification Channel*`);
+                    msg.channel.send(`> *Set ${msg.channel} as Guild Notification Board channel*`);
                 }
                 break;
+            }
+            case "hall": {
+                guild.hall_id = msg.channel.id;
+                let result = await bot.execsql(`
+                    update guild_custom_data
+                    set hall_channel = "${guild.hall_id}"
+                    where guild_id = "${guild.guild_id}"
+                `);
+                if (result && result.affectedRows) {
+                    msg.channel.send(`> *Set ${msg.channel} as Guild Hall channel*`); 
+                }
+                break;
+            }
             default: 
                 return;
         }

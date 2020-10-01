@@ -22,6 +22,7 @@ module.exports = class Bot {
         this.members = new Discord.Collection();
         this.members_update = false;
         this.adventure_data_sync = null;
+        this.chest_drop_loop = null;
         this.adventure_const = {
             attendance_timeout: 30000,
             attendance_gold: 200
@@ -31,7 +32,8 @@ module.exports = class Bot {
                 notice_at: null,
                 noticed: false,
                 drop_at: null,
-                dropped: true,
+                dropped: false,
+                dropping: false,
                 amount: 0
             }
         }
@@ -100,14 +102,24 @@ module.exports = class Bot {
                                     }
                                     self.members_update = false;
                                 }
-
+                            }
+                        })(this),
+                        cfg.refresh_timeloop
+                    );
+                    this.chest_drop_loop = setInterval(
+                        (function (self) {
+                            return function () {
+                                let now = Date.now();
                                 //Loop check gold_drop_event
                                 if (self.world_data.gold_drop.dropped) {
-
+                                    self.world_data.gold_drop.dropped = false;
+                                    self.world_data.gold_drop.notice_at = null;
+                                    self.world_data.gold_drop.noticed = null;
                                 } else {
                                     if (!self.world_data.gold_drop.notice_at) {
-                                        self.world_data.gold_drop.notice_at = now + 10000;
-                                        self.world_data.gold_drop.drop_at = now + 20000;
+                                        let time = now + 3600000 + Math.floor(Math.random() * 43200000);
+                                        self.world_data.gold_drop.notice_at = time
+                                        self.world_data.gold_drop.drop_at = time + 300000;
                                     } else {
                                         if (self.world_data.gold_drop.notice_at <= now) {
                                             if (!self.world_data.gold_drop.noticed) {
@@ -122,7 +134,7 @@ module.exports = class Bot {
                                 }
                             }
                         })(this),
-                        cfg.refresh_timeloop
+                        2000
                     );
                     console.log(`Loaded custom data of ${this.data.size} guilds`);
                 } catch (e) {
@@ -169,9 +181,12 @@ module.exports = class Bot {
             .on("gold_drop_event_notice", async () => {
                 let guilds = this.client.guilds.cache;
                 for (const [gid, g] of guilds) {
-                    let noti_ch = g.channels.cache.find(c => c.name == "tester-tester");
-                    if (noti_ch) {
-                        noti_ch.send(`> Something is coming in <#${noti_ch.id}>`);
+                    let _g = this.data.get(gid);
+                    let noti_ch = null;
+                    if (_g && (noti_ch = g.channels.cache.find(c => c.id == _g.adv_notif_channel))) {
+                        if (_g.hall_id && g.channels.cache.has(_g.hall_id)) {
+                            noti_ch.send(`> Something is coming in <#${_g.hall_id}>`);
+                        }
                     }
                 }
                 this.world_data.gold_drop.noticed = true;
@@ -185,24 +200,24 @@ module.exports = class Bot {
                             Math.floor(Math.random()*10)
                 for (const [gid, g] of guilds) {
                     let _g = this.data.get(gid);
-                    let noti_ch = null;
-                    if (_g && (noti_ch = g.channels.cache.find(c => c.id == _g.adv_notif_channel))) {
+                    let hall_ch = null;
+                    if (_g && (hall_ch = g.channels.cache.find(c => c.id == _g.hall_id))) {
                         let amount = gold_drop_rate[Math.floor(Math.random() * gold_drop_rate.length)];
-                        let notice = await noti_ch.send(`> *A Chest appears. There is a note on the chest, It says ${code}*.`);
-                        noti_ch.awaitMessages(m => {
+                        let notice = await hall_ch.send(`> *A Chest appears. There is a note on the chest, It says ${code}*.`);
+                        hall_ch.awaitMessages(m => {
                             if (m.content == code && this.members.has(m.author.id)) {
                                 let mem = this.members.get(m.author.id)
                                 mem.balance += amount;
                                 mem.process.sync = true;
                                 this.members_update = true;
-                                m.channel.send(`> *${mem.getName()} gains ${amount}G from the chest.*`)
+                                m.channel.send(`> *${mem.getName()} gains ${amount} [G] from the chest.*`)
                                 return true;
                             }
                             return false;
-                        },{max: 1, time: 20000, errors: ['time']})
+                        },{max: 1, time: 4000, errors: ['time']})
                             .catch(collected => {
                                 notice.delete();
-                                noti_ch.send("> *Chest disappeared!*");
+                                hall_ch.send("> *Chest disappeared!*");
                             });;
                     }
                 }

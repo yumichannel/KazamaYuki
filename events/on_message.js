@@ -1,5 +1,6 @@
 const Discord = require('discord.js')
 const Bot = require('../models/Bot');
+const translator = require('../models/config').translate;
 module.exports = async function onMessage(bot = new Bot(), message = new Discord.Message) {
     if (message.channel.type === "dm") return;
     if (!bot.ready) return console.log('Bot is not ready.');
@@ -17,7 +18,7 @@ module.exports = async function onMessage(bot = new Bot(), message = new Discord
     if (caller === "help") return await message.member.send(require('../utils/getHelpList')(bot.commands));
 
     if (!bot.commands.has(caller)) {
-        const errorMsg = bot.client.data.get(guild.id).errorMsg;
+        const errorMsg = bot.data.get(guild.id).errorMsg;
         return await channel.send(errorMsg[Math.floor(Math.random() * errorMsg.length)] || "Not an illegal command.")
     } else {
         const command = bot.commands.get(caller);
@@ -43,13 +44,13 @@ module.exports = async function onMessage(bot = new Bot(), message = new Discord
         if (command.category === "admin") {
             if (!message.member.permissions.has("ADMINISTRATOR")) {
                 return await channel.send(
-                    translator.admin_warn[bot.client.data.get(guild.id).lang]
+                    translator.admin_warn[bot.data.get(guild.id).lang]
                         .replace("@user", message.member)
                 );
             }
         }
         if (command.category === "creator" && message.author.id !== process.env.owner) {
-            return await channel.send(translator.owner_warn[bot.client.data.get(guild.id).lang]);
+            return await channel.send(translator.owner_warn[bot.data.get(guild.id).lang]);
         }
         if (command.nsfw === true && message.channel.nsfw === false) {
             return bot.client.lewd_warning(message);
@@ -60,7 +61,7 @@ module.exports = async function onMessage(bot = new Bot(), message = new Discord
         if (bot.cd.has(cdkey)) {
             let exp = bot.cd.get(cdkey);
             if (Date.now() < exp) {
-                return channel.send(translator.cooldown_warn[bot.client.data.get(guild.id).lang]);
+                return channel.send(translator.cooldown_warn[bot.data.get(guild.id).lang]);
             }
         }
         // Set new cooldown

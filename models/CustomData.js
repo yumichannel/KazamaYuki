@@ -1,13 +1,14 @@
 const config = require('./config')
 module.exports = class CustomData{
     constructor(data){
-        this.guild_id=data.guild_id
-        this.wc_msg=data.wc_msg || []
-        this.wc_channel = data.wc_channel || null
-        this.err_msg=data.err_msg || []
-        this.prefix=data.prefix || config.prefix
-        this.lang=data.lang || "en"
+        this.guild_id=data.guild_id;
+        this.wc_msg=data.wc_msg || [];
+        this.wc_channel = data.wc_channel || null;
+        this.err_msg=data.err_msg || [];
+        this.prefix=data.prefix || config.prefix;
+        this.lang=data.lang || "en";
         this.adv_notif_channel = data.adv_notif_channel || null;
+        this.hall_id = data.hall_channel || null;
     }
     /** @param {String[]} welcomeMsg set Greeting Message Handle*/
     setWelcome(welcomeMsg){

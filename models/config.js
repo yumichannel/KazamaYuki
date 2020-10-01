@@ -71,5 +71,5 @@ module.exports = {
     database: {
         mysql: 1
     },
-    refresh_timeloop: 6000
+    refresh_timeloop: 6000,
 };
