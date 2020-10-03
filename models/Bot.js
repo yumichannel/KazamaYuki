@@ -23,6 +23,7 @@ module.exports = class Bot {
         this.members_update = false;
         this.adventure_data_sync = null;
         this.chest_drop_loop = null;
+        this.chest_drop_clock = null;
         this.adventure_const = {
             attendance_timeout: 30000,
             attendance_gold: 200
@@ -117,7 +118,7 @@ module.exports = class Bot {
                                     self.world_data.gold_drop.noticed = null;
                                 } else {
                                     if (!self.world_data.gold_drop.notice_at) {
-                                        let time = now + 3600000 + Math.floor(Math.random() * 43200000);
+                                        let time = now + Math.floor(Math.random() * 21600000);
                                         self.world_data.gold_drop.notice_at = time
                                         self.world_data.gold_drop.drop_at = time + 300000;
                                     } else {
@@ -134,7 +135,7 @@ module.exports = class Bot {
                                 }
                             }
                         })(this),
-                        2000
+                        5000
                     );
                     console.log(`Loaded custom data of ${this.data.size} guilds`);
                 } catch (e) {
@@ -218,7 +219,7 @@ module.exports = class Bot {
                             .catch(collected => {
                                 notice.delete();
                                 hall_ch.send("> *Chest disappeared!*");
-                            });;
+                            });
                     }
                 }
                 this.world_data.gold_drop.dropped = true;
