@@ -22,6 +22,37 @@ class Member {
     }
 }
 
+class Shop {
+    constructor(data) {
+        this.list = null;
+    }
+}
+
+class ShopItem {
+    constructor(data) {
+        this.id = data.id || null;
+        this.name = data.name || null;
+        this.price = data.price || null;
+        this.rank = data.rank || null;
+        this.category = data.category_id || null;
+        this.sale = {
+            price: data.sale_price || null
+        };
+        this.require = {
+            rank: data.user_rank || null,
+            level: data.user_level || null
+        }
+        this.desc = data.description || null
+    }
+}
+
+class ShopCategory {
+    constructor(data) {
+        this.id = data.id || null;
+        this.name = data.name || null;
+    }
+}
+
 function getRequireExp(level) {
     return 10 * level;
 }
@@ -40,8 +71,17 @@ function calculateXP(member) {
     return member;
 }
 
+function formatPrice(price) {
+    let _p = price + "";
+    return _p.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 module.exports = {
     Member: Member,
+    Shop: Shop,
+    ShopItem: ShopItem,
+    ShopCategory: ShopCategory,
     getRequireExp: getRequireExp,
-    calculateXP: calculateXP
+    calculateXP: calculateXP,
+    formatPrice: formatPrice
 }

@@ -3,6 +3,7 @@ const fs = require('fs');
 const load_cmd = require('../utils/load_command.js');
 const load_data = require('../utils/load_data.js');
 const load_member_data = require('../utils/load_member_data.js');
+const load_shop_data = require('../utils/load_shop_data.js');
 const translator = require('./config').translate;
 const snek = require('snekfetch');
 const defaultAction = require('./DefaultAction');
@@ -78,6 +79,7 @@ module.exports = class Bot {
                     let guildIdList = this.client.guilds.cache.map(g => g.id);
                     this.data = await load_data(guildIdList, this.conn);
                     this.members = await load_member_data(this.conn);
+                    // this.shop = await load_shop_data(this.conn);
                     this.ready = true;
                     this.adventure_data_sync = setInterval(
                         (function (self) {
