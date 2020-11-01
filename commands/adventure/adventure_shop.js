@@ -7,7 +7,11 @@ const data = {
     cd: 10,
     description: "Registed member can buy much thing from shop",
     nsfw: false,
-    help: [],
+    help: [
+        ["pick>n","Chose option n"],
+        ["exit","leave shop"],
+        ["<<<","go back"]
+    ],
     enable: true,
     alias: [],
     run: async function (bot = new Bot({}), msg = new Discord.Message, params = []) {
@@ -32,15 +36,18 @@ const data = {
                 cates = await bot.execsql(`select * from shop_category`);
                 shop = new Discord.MessageEmbed;
                 shop.setTitle("Yuki Hazama Shop");
-                shop.setDescription("Welcome!\nChose collection by typing matched number\n(Type *exit* to leave\n\------------------)");
+                shop.setDescription(`Welcome to Yuki's shop for Adventurer !!!
+                if you need help, type \`;goshop help\` or ask others Adventurer.
+                \\----------------------------`);
                 for (let i = 0; i < cates.length; i++) {
-                    shop.addField(`${cates[i].id}: ${cates[i].name}`, `${cates[i].description}`);
+                    shop.addField(`${cates[i].id}: ${cates[i].name}`, `${cates[i].description.substring(0,20)}...`, true);
                 }
                 shop = await msg.channel.send(shop);
                 while (true) {
                     answer = await msg.channel.awaitMessages(m => m.author.id === msg.author.id 
                         && (m.content.trim().match(pick_pattern) 
-                            || m.content.trim() == "exit"), 
+                        || m.content.trim() == "exit" 
+                        || m.content.trim() == "<<<"), 
                     { max: 1 });
                     answer = answer.first();
                     if (answer.content == "exit") break;
@@ -67,8 +74,7 @@ const data = {
                     `);
                     shop = new Discord.MessageEmbed;
                     shop.setTitle(`Collection: **${cate.name}**`);
-                    shop.setDescription(`Welcome!
-                    Chose product => \`pick>1\`
+                    shop.setDescription(`${cate.description}
                     \\------------------`);
                     for (let i = 0; i < items.length; i++) {
                         shop.addField(
@@ -84,7 +90,8 @@ const data = {
                     while(true) {
                         answer = await msg.channel.awaitMessages(m => m.author.id === msg.author.id 
                             && (m.content.trim().match(pick_pattern) 
-                                || m.content.trim() == "exit"), 
+                                || m.content.trim() == "exit" 
+                                || m.content.trim() == "<<<"), 
                         { max: 1 });
                         answer = answer.first();
                         if (answer.content == "exit") break;

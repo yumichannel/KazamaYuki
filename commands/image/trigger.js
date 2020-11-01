@@ -7,13 +7,14 @@ const data = {
     caller: "trigger",
     cd: 10,
     enable: true,
-    run: async function (bot,message, params) {
+    run: async function (bot = new Bot({}), message = new Discord.Message, params = []) {
         let args = params[1];
+        let ava
         if (message.mentions.members.size === 0) {
-            var {body: buffer} = await snekfetch.get(message.author.avatarURL({
+            var buffer = await message.author.avatarURL({
                 format: "jpg",
                 size: 256
-            }));
+            });
         } else {
             if (message.mentions.members.size > 1) {
                 return message.channel.send(`you can't trigger more than one person!`, {code: true})
@@ -47,7 +48,7 @@ const data = {
             context.restore();
             x = Math.floor(Math.random() * 15) - 25;
             y = Math.floor(Math.random() * 15) + 210;
-            context.drawImage(trigger, x, y, 400, 100);
+            // context.drawImage(trigger, x, y, 400, 100);
             encoder.addFrame(context);
             if (counter <= 0) {
                 encoder.finish();
