@@ -6,7 +6,7 @@ module.exports = {
     test:"test?",
     cmdType:[
         // 'general',
-        // 'image',
+         'image',
         // 'bot',
         // 'game',
         // 'admin',
