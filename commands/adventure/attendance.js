@@ -5,7 +5,7 @@ const Adventure = require('../../models/Adventure');
 const data = {
     caller: "daily",
     cd: 10,
-    description: "Check member info",
+    description: "Checkin everyday, free gold everyday",
     nsfw: false,
     help: [],
     enable: true,
@@ -14,11 +14,11 @@ const data = {
         if (bot.members.has(msg.author.id)) {
             let mem = bot.members.get(msg.author.id);
             let now = Date.now();
-            if (now - mem.last_atd > bot.adventure_const.attendance_timeout || !mem.last_atd) {
-                mem.last_atd = now;
+            if (now - mem.last_atd.getTime() > bot.adventure_const.attendance_timeout || !mem.last_atd) {
+                mem.last_atd = new Date(now);
                 mem.balance += bot.adventure_const.attendance_gold;
                 mem.process.sync = true;
-                bot.members.set(mem.user_id, mem);
+                // bot.members.set(mem.user_id, mem);
                 msg.channel.send(`${mem.getName()} receives ${bot.adventure_const.attendance_gold}G from attendance.`);
             }
         }

@@ -96,11 +96,12 @@ module.exports = class Bot {
                                                     race = ${mem.race},
                                                     level = ${mem.level},
                                                     exp = ${mem.exp},
-                                                    balance = ${mem.balance}
+                                                    balance = ${mem.balance},
+                                                    last_atd = "${mem.last_atd.toISOString()}"
                                                 where user_id = "${mem.user_id}"
                                             `);
                                             mem.process.sync = false;
-                                            self.members.set(user_id, mem);
+                                            // self.members.set(user_id, mem);
                                         }
                                     }
                                     self.members_update = false;
