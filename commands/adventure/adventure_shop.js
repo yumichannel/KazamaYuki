@@ -20,7 +20,6 @@ const data = {
          */
         let member = bot.members.get(msg.member.id);
         if (!member) return;
-        /** @type Array */
         var mode = "category",
             shop = null,
             answer = null,
@@ -54,6 +53,7 @@ const data = {
                     cate = cates.find(c => c.id == answer.content.trim().replace("pick>",""));
                     if (cate) {
                         mode = "items";
+                        referer_mode = "category";
                         break;
                     }
                 }
@@ -94,7 +94,7 @@ const data = {
                                 || m.content.trim() == "<<<"), 
                         { max: 1 });
                         answer = answer.first();
-                        if (answer.content == "exit") break;
+                        if (answer.content == "exit" || answer.content == "<<<") break;
                         item_buy = items.find(i => i.id == answer.content.trim().replace("pick>",""));
                         if (!item_buy) {
                             msg.channel.send("item not found");
@@ -105,9 +105,30 @@ const data = {
                         }
                     }
                     if (answer.content == "exit") break;
+                    if (answer.content == "<<<") {
+                        mode = referer_mode;
+                    }
                 }
             } else if (mode = "transaction") {
-                await msg.channel.send(`${member.getName()} bought 1 ${item_buy.name}`);
+                if (item_buy.price > member.balance) {
+                    await msg.channel.send(`${member.getName()} Not enough money.`);
+                } else {
+                    member_items = await bot.execsql(`select item_id, quantity from member_items where user_id = "${member.user_id}"`);
+                    let found = member_items.find(i => i.item_id == item_buy.id)
+                    let complete = false;
+                    if (found) {
+                        let update = await bot.execsql(`update member_items set quantity = ${found.quantity+1} where user_id = "${member.user_id}" and item_id = ${found.item_id}`);
+                        if (update.changedRows) complete = true;
+                    } else {
+                        let insert = await bot.execsql(`insert into member_items(user_id,item_id,quantity) values("${member.user_id}",${item_buy.id},1)`)
+                        if (insert.affectedRows) complete = true;
+                    }
+                    if (complete) {
+                        member.balance -= item_buy.price;
+                        member.process.sync = true;
+                    }
+                    await msg.channel.send(`${member.getName()} bought 1 ${item_buy.name}`);
+                }
                 mode = referer_mode;
             }
         }

@@ -1,6 +1,5 @@
 const Discord = require('discord.js');
 const Command = require('../../models/Command');
-const snek = require('snekfetch');
 const Canvas = require('canvas');
 const data = {
     caller: "slap",
@@ -12,19 +11,17 @@ const data = {
     enable: true,
     run: async function (bot, msg, param) {
         let text = "";
-        const {body: buffer1} = await snek.get(msg.author.avatarURL({
+        const slapper = await Canvas.loadImage(msg.author.avatarURL({
             size: 256,
             format: 'jpg'
         }));
-        const slapper = await Canvas.loadImage(buffer1);
         let slapped;
         if (msg.mentions.members.size > 0) {
             if (!msg.mentions.members.get(msg.client.user.id)) {
-                const {body: buffer2} = await snek.get(msg.mentions.members.first().user.avatarURL({
+                slapped = await Canvas.loadImage(msg.mentions.members.first().user.avatarURL({
                     size: 256,
                     format: 'jpg'
-                }));
-                slapped = await Canvas.loadImage(buffer2)
+                }))
             } else {
                 text = "Không trượt phát lào";
                 slapped = slapper;

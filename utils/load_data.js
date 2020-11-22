@@ -20,6 +20,8 @@ module.exports = (guildIdList = [], conn)=>{
                 var cdata = guilds.find(item=>item.guild_id==id)
                 if(cdata==undefined){
                     var new_data = new CustomData({guild_id:id})
+                    new_data.err_msg = []
+                    new_data.wc_msg = []
                     data.set(id,new_data)
                     new_guilds.push(new_data)
                 }else{

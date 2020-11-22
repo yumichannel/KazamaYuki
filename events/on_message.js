@@ -17,9 +17,11 @@ module.exports = async function onMessage(bot = new Bot(), message = new Discord
     // Is that command exist?
     if (caller === "help") return await message.member.send(require('../utils/getHelpList')(bot.commands));
 
+    caller = bot.aliases[caller];
+
     if (!bot.commands.has(caller)) {
-        const errorMsg = bot.data.get(guild.id).errorMsg;
-        return await channel.send(errorMsg[Math.floor(Math.random() * errorMsg.length)] || "Not an illegal command.")
+        const err_msg = bot.data.get(guild.id).err_msg;
+        return await channel.send(err_msg[Math.floor(Math.random() * err_msg.length)] || "Not an illegal command.")
     } else {
         const command = bot.commands.get(caller);
         // Check command help
