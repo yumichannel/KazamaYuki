@@ -101,7 +101,6 @@ module.exports = class Bot {
                                                 where user_id = "${mem.user_id}"
                                             `);
                                             mem.process.sync = false;
-                                            // self.members.set(user_id, mem);
                                         }
                                     }
                                     self.members_update = false;

@@ -18,7 +18,6 @@ const data = {
                 mem.last_atd = new Date(now);
                 mem.balance += bot.adventure_const.attendance_gold;
                 mem.process.sync = true;
-                // bot.members.set(mem.user_id, mem);
                 msg.channel.send(`${mem.getName()} receives ${bot.adventure_const.attendance_gold}G from attendance.`);
             }
         }
