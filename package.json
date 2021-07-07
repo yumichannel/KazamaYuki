@@ -22,6 +22,7 @@
     "dotenv": "^6.2.0",
     "ffmpeg": "0.0.4",
     "ffmpeg-static": "^2.7.0",
+    "ffmpeg-stream": "^0.7.0",
     "gifencoder": "^1.1.0",
     "google-auth-library": "^4.2.5",
     "google-translate-api": "^2.3.0",
@@ -32,8 +33,8 @@
     "password-generator": "^2.2.0",
     "readline-sync": "^1.4.9",
     "snekfetch": "^4.0.4",
-    "ytdl-core": "^2.1.2",
-    "ytdl-core-discord": "^1.0.3"
+    "ytdl-core": "^4.0.0",
+    "ytdl-core-discord": "^1.3.1"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"

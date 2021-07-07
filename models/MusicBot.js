@@ -1,10 +1,8 @@
 'use strict';
 const Discord = require('discord.js');
-const ytdl = require('ytdl-core');
 const load_cmd = require('../utils/load_music_command.js');
 const report = require('../utils/report');
 const Player = require('../models/MPlayer');
-var fs = require('fs');
 
 module.exports = class MusicBot {
     constructor(cfg) {
@@ -14,6 +12,7 @@ module.exports = class MusicBot {
         this.client.report = report;
         this.client.on('ready', async () => {
             console.log(`Logged in as ${this.client.user.tag}!`);
+            console.log(process.cwd());
             try {
                 this.commands = await load_cmd();
             } catch (e) {

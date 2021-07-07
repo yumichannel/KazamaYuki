@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const ytdl = require('ytdl-core');
+const ytdl = require('ytdl-core-discord');
 const fs = require('fs');
 module.exports = class MPlayer {
     constructor() {
@@ -17,23 +17,23 @@ module.exports = class MPlayer {
                 return this.chatChannel.send('End of queue', {code: true});
             }
             let videoID = this.current.id;
-            fs.access('assets/music_cache/'+videoID+'.mp3',fs.F_OK,(err) => {
-                var src;
-                if (err) {
-                    console.log('caching '+videoID);
-                    src = ytdl(this.current.url)
-                    // src.pipe(fs.createWriteStream('assets/music_cache/'+videoID+'.mp3'));
-                } else {
-                    src = 'assets/music_cache/'+videoID+'.mp3';
-                    console.log('play '+videoID+' from cache');
-                }
-                this.connection.play(src)
-                    .on('finish', () => this.onFinish())
-                    .on('error', err => this.onError(err))
-                    .on("start", () => {
-                        this.chatChannel.send("Now Playing: \`"+this.current.info.title+"\`");
-                    })
-            })
+
+            this.connection.play(await ytdl(this.current.url, {
+                quality: 'highest',
+                filter: 'audioonly',
+                opusEncoded: true
+            }), { type: 'opus' })
+                .on('finish', () => this.onFinish())
+                .on('error', err => this.onError(err))
+                .on("start", () => {
+                    let msg = ":arrow_forward: " + this.current.info.title;
+                    let nextMsg = "🔽" + (this.queue.length > 0 ? this.queue[0].info.title : '');
+                    this.chatChannel.send(new Discord.MessageEmbed({
+                        color: "BLUE",
+                        description: msg.length > 100 ? msg.substr(0, 100) + "..." : msg,
+                        footer: {text: nextMsg.length > 100 ? nextMsg.substr(0, 100) + "..." : nextMsg},
+                    }));
+                });
         }
         this.onFinish = () => {
             this.next();

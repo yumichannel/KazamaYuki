@@ -6,9 +6,10 @@ const data = {
     cd: 1,
     enable: true,
     run: async function(client = new Discord.Client(),msg = new Discord.Message(),params= []) {
+        if (!msg.guild.music_player.current) return;
         let em = new Discord.MessageEmbed();
         em.setTitle('Sagiri music player!');
-        em.setImage(msg.guild.music_player.current.info.thumbnail.thumbnails[0].url || 'https://x.jpg');
+        em.setImage(msg.guild.music_player.current && msg.guild.music_player.current.info.thumbnail.thumbnails[0].url || 'https://x.jpg');
         em.addField('Now playing',msg.guild.music_player.current.info.title)
         let queue = [];
         if (msg.guild.music_player.queue.length > 0) {

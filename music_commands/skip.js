@@ -9,7 +9,7 @@ const data = {
         var player = msg.guild.music_player;
         if (player.current) {
             player.lastPlay = player.current;
-            console.log("Skip "+player.current.info.title);
+            console.log("Skip "+player.current.url);
             if (params[1] === "-k" || params[1] === "--keep") {
                 player.next(false);
             } else {

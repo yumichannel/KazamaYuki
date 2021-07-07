@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 const Command = require('../models/Command');
-const ytdl = require('ytdl-core');
+const ytdl = require('ytdl-core-discord');
 const data = {
     caller: "play",
     cd: 1,
@@ -14,23 +14,22 @@ const data = {
         if (!ytdl.validateURL(params[1])) return msg.channel.send("Invalid url.");
         let vid = params[1];
         try {
+            let info = await ytdl.getInfo(vid);
+            let newItem = {
+                id: ytdl.getVideoID(vid),
+                url: vid,
+                info: info.player_response.videoDetails
+            };
+            if (newItem.info.isPrivate) return msg.channel.send("Invalid url.");
             if (player.connection.dispatcher) {
-                player.queue.push({
-                    id: ytdl.getVideoID(vid),
-                    url: vid,
-                    info: (await ytdl.getInfo(vid)).player_response.videoDetails
-                });
+                player.queue.push(newItem);
             } else {
-                player.current = {
-                    id: ytdl.getVideoID(vid),
-                    url: vid,
-                    info: (await ytdl.getInfo(vid)).player_response.videoDetails
-                };
+                player.current = newItem;
                 player.play();
             }
         } catch (e) {
             let log_id = await client.report('report',e.message);
-            return msg.channel.send('Something went wrong. Check log number '+log_id);
+            return msg.channel.send('Something went wrong. Check log number ' + log_id);
         }
     }
 }
